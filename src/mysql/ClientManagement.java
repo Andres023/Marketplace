@@ -1,6 +1,5 @@
 package mysql;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -27,7 +26,7 @@ public class ClientManagement extends ConnectionManagement{
 	public boolean registerClient(User user){
 		try {
 			//Declare the SQL statement
-        	String sql="INSERT INTO usuarios (nombres,apellidos,tipoDoc,numDoc,telefono,codigoPostal,fechaNacimiento,genero) VALUES (?,?,?,?,?,?,?,?)";
+        	String sql=" INSERT INTO personas (nombres,apellidos,tipoDoc,numDoc,telefono,codigoPostal,fechaNacimiento,genero) VALUES (?,?,?,?,?,?,?,?)";
         	
         	PreparedStatement prepare = connection.prepareStatement(sql);
         	
@@ -41,7 +40,12 @@ public class ClientManagement extends ConnectionManagement{
 				prepare.setDate(7, user.getBirth());
 				prepare.setInt(8, user.getGender());
 				
-				return prepare.executeUpdate() > 0;
+				int result = prepare.executeUpdate();
+				if(result > 0) {
+					return true;
+				}else {
+					return false;
+				}
 			}else {
 				return false;
 			}

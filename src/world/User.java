@@ -1,6 +1,6 @@
 package world;
 
-import java.util.Date;
+import java.sql.Date;
 
 /*
  * @author Andrés Pájaro

@@ -9,6 +9,7 @@ public class ConnectionManagement {
 	//Connection 
 	protected Connection connection;
 	protected String url= "";
+	protected String driver = "com.mysql.jdbc.Driver";
 	
 	//User and password of the DB
 	protected String user = "root";
@@ -19,10 +20,10 @@ public class ConnectionManagement {
 	 */
 	public boolean openConnection(){
 		try{
-			url = "jdbc:mysql://localhost:3306/marketpalce";
-			connection = DriverManager.getConnection(url, user, password);
+			Class.forName(driver).newInstance();
+			connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1/marketpalce?user="+user+"&password="+password);
 			return true;
-		}catch (SQLException ex){
+		}catch (Exception ex){
 			return false;
 		}
 	}

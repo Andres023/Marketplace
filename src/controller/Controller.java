@@ -1,6 +1,7 @@
 package controller;
 
-import java.util.Date;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
@@ -17,7 +18,6 @@ public class Controller {
 	
 	//Utilities
 	private Scanner sc = new Scanner(System.in);
-	private SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/DD");
 	private boolean insert; 
 	
 	public Controller() {
@@ -46,12 +46,7 @@ public class Controller {
 		
 		System.out.println("Nacimiento");
 		String fecha = sc.next();
-		Date birth = null;
-		try {
-			birth = format.parse(fecha);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		Date birth = Date.valueOf(fecha);
 		
 		System.out.println("Genero");
 		int gender = sc.nextInt();
