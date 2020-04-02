@@ -3,6 +3,8 @@ package controller;
 import javax.swing.JOptionPane;
 
 import mysql.ClientManagement;
+import mysql.LoginManagement;
+import visual.Main;
 import world.User;
 
 /*
@@ -13,13 +15,15 @@ import world.User;
  */
 public class Controller {
 	
-	public Controller() {
-		
+	Main main;
+	
+	public Controller(Main main) {
+		this.main = main;
 	}
 	
 	public void clientRegister(User user){
 
-        //Create de registerClient Object
+        //Create the registerClient Object
         ClientManagement register = new ClientManagement();
         
         //Insert the client in the DB
@@ -39,6 +43,23 @@ public class Controller {
         	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
         			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
         }
+	}
+
+	public void login(String email, String password) {
+		
+		//Create the loginMangement object
+		LoginManagement login = new LoginManagement();
+		
+		int loginStatus = login.login(email, password);
+		
+		if(loginStatus > 0) {
+			System.out.println("Éxito");
+			main.showWelcomePanel();
+			
+		}else {
+			JOptionPane.showMessageDialog(null, "El correo o la contraseña son incorrectos.\n"
+        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 }

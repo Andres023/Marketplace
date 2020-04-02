@@ -4,8 +4,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
-
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,12 +12,17 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import controller.Controller;
-import mysql.ClientManagement;
 import world.User;
 
-public class RegisterPanel extends JPanel implements ActionListener {
+/*
+ * Andrés Felipe Pájaro Jurado
+ * 
+ * User's interface to register & create an account 
+ */
+public class UserRegisterPanel extends JPanel implements ActionListener {
 
-	//Controller
+	//Utilities
+	Main main;
 	Controller ctrl;
 	
 	//Labels
@@ -53,9 +56,11 @@ public class RegisterPanel extends JPanel implements ActionListener {
 	//Buttons
 	private JButton submit;
 	private JButton clean;
+	private JButton backToMenuBtn;
 	
-	public RegisterPanel(Controller ctrl) {
+	public UserRegisterPanel(Controller ctrl, Main main) {
 		
+		this.main = main;
 		this.ctrl = ctrl;
 		
 		setLayout(null);
@@ -164,13 +169,18 @@ public class RegisterPanel extends JPanel implements ActionListener {
 
 		//Buttons
 		submit = new JButton("Registrame ahora");
-		submit.setBounds(680, 240, 178, 25);
+		submit.setBounds(680, 216, 178, 25);
 		submit.addActionListener(this);
 		this.add(submit);
 		clean = new JButton("Limpiar");
-		clean.setBounds(680, 300, 178, 25);
+		clean.setBounds(680, 270, 178, 25);
 		clean.addActionListener(this);
 		this.add(clean);
+		
+		backToMenuBtn = new JButton("Volver");
+		backToMenuBtn.setBounds(680, 327, 178, 23);
+		backToMenuBtn.addActionListener(this);
+		add(backToMenuBtn);
 	}
 	
 	public void cleanForm() {
@@ -221,6 +231,8 @@ public class RegisterPanel extends JPanel implements ActionListener {
 			}
 		}else if(e.getActionCommand().equalsIgnoreCase("Limpiar")) {
 			cleanForm();
+		}else if(e.getActionCommand().contentEquals(backToMenuBtn.getText())) {
+			main.backToMenu(this);
 		}
 	}
 
