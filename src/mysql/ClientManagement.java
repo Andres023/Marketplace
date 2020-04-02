@@ -1,6 +1,7 @@
 package mysql;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ public class ClientManagement extends ConnectionManagement{
 		}
 	}
 	
-	public boolean registerClient(User user){
+	public boolean registerPerson(User user){
 		try {
 			//Declare the SQL statement
         	String sql=" INSERT INTO personas (nombres,apellidos,tipoDoc,numDoc,telefono,codigoPostal,fechaNacimiento,genero) VALUES (?,?,?,?,?,?,?,?)";
@@ -41,6 +42,8 @@ public class ClientManagement extends ConnectionManagement{
 				prepare.setInt(8, user.getGender());
 				
 				int result = prepare.executeUpdate();
+				
+				//If the INSERT has been success, now we can INSERT the user info (email & password)
 				if(result > 0) {
 					return true;
 				}else {
@@ -55,5 +58,58 @@ public class ClientManagement extends ConnectionManagement{
 			return false;
 		}
 	}
+	
+	public boolean registerUser(User user) {
+		
+		try {
+			String sql = "INSERT INTO usuarios (idPersona, correo, clave) VALUES (?,?,?)";
+			
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			
+			int id = getID(user);//Get the ID of the person to insert as FK in the user table
+			
+			if(id > 0) {
+				prepare.setInt(1, id);
+				prepare.setString(2, user.getEmail());
+				prepare.setString(3, user.getPassword());
+				
+				int result = prepare.executeUpdate();
+				if(result > 0) {
+					return true;
+				}else {
+					return false;
+				}
+			}else {
+				return false;
+			}
+		}catch (SQLException ex) {
+			Logger.getLogger(ClientManagement.class.getName()).log(Level.SEVERE, null, ex);
+			return false;
+		}
+	}
 
+	/*
+	 * Return the ID that references to the person
+	 */
+	public int getID(User user){
+		int id;
+		String sql = "SELECT idPersona FROM personas WHERE numDoc = ?";
+		try {
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			prepare.setString(1, user.getDocNumber());
+			ResultSet resulSet = prepare.executeQuery();
+			
+			if(resulSet.next()){
+				id = resulSet.getInt(1);
+			}else {
+				id = -1;
+			}
+			
+		} catch (SQLException ex) {
+			id = -1;
+			ex.printStackTrace();
+		}
+		return id;
+	}
+	
 }

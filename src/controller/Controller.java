@@ -1,10 +1,7 @@
 package controller;
 
-import java.sql.Date;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Scanner;
+import javax.swing.JOptionPane;
+
 import mysql.ClientManagement;
 import world.User;
 
@@ -16,60 +13,32 @@ import world.User;
  */
 public class Controller {
 	
-	//Utilities
-	private Scanner sc = new Scanner(System.in);
-	private boolean insert; 
-	
 	public Controller() {
 		
 	}
 	
-	public void clientRegister(){
-		//Personal info (This will go on an decent interface xD)
-		System.out.println("Nombre");
-		String names = sc.nextLine();
-		
-		System.out.println("Apellidos");
-		String lastnames = sc.nextLine();
-		
-		System.out.println("TipoDocumento");
-		int docType = sc.nextInt();
-		
-		System.out.println("Documento");
-		String docNumber = sc.next();
-		
-		System.out.println("Telefono");
-		String phoneNumber = sc.next();
-		
-		System.out.println("Codigo POSTAL");
-		String postalCode = sc.next();
-		
-		System.out.println("Nacimiento");
-		String fecha = sc.next();
-		Date birth = Date.valueOf(fecha);
-		
-		System.out.println("Genero");
-		int gender = sc.nextInt();
-		
-		//Account data
-		System.out.println("Correo");
-		String email = sc.next();
-		
-		System.out.println("Clave");
-		String password = sc.next();
-		
-		System.out.println("Clave");
-		String verifyPassword = sc.next();
-		
-		//Create the user
-        User user = new User(email, password, verifyPassword, names, lastnames, docType, docNumber, phoneNumber, postalCode, birth, gender); 
-        
+	public void clientRegister(User user){
+
         //Create de registerClient Object
         ClientManagement register = new ClientManagement();
         
         //Insert the client in the DB
-        insert = register.registerClient(user);
-        System.out.println(insert);
+        boolean insertPerson = register.registerPerson(user);
+        
+        //If the insert has been success, now, insert the user
+        if(insertPerson){
+        	boolean insertUser = register.registerUser(user);
+        	if(insertUser) {
+	        	JOptionPane.showMessageDialog(null, "Los datos han sido insertados correctamente.\n"
+	        			+ "Por favor inicie sesión", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        	}else {
+        		JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
+            			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+        	}
+        }else {
+        	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
+        			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+        }
 	}
 
 }
