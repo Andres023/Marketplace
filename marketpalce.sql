@@ -137,7 +137,7 @@ CREATE TABLE `personas` (
   KEY `fk_tipoDoc` (`tipoDoc`),
   CONSTRAINT `fk_genero` FOREIGN KEY (`genero`) REFERENCES `genero` (`idGenero`),
   CONSTRAINT `fk_tipoDoc` FOREIGN KEY (`tipoDoc`) REFERENCES `tipodocumento` (`idTipoDocumento`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,6 +146,7 @@ CREATE TABLE `personas` (
 
 LOCK TABLES `personas` WRITE;
 /*!40000 ALTER TABLE `personas` DISABLE KEYS */;
+INSERT INTO `personas` VALUES (1,'Andrés Felipe','Pájaro Jurado',1,'1007703357','3167260560','250040','2000-10-23',1),(2,'María Alejandra','Pedraza Cardenas',1,'1001331829','3208081478','250040','2001-10-23',2),(5,'Gabriel José','Pájaro Jurado',4,'1032676235','3222128534','250040','2004-01-08',1);
 /*!40000 ALTER TABLE `personas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -406,7 +407,7 @@ CREATE TABLE `usuarios` (
   PRIMARY KEY (`idUsuario`),
   KEY `fk_persona` (`idPersona`),
   CONSTRAINT `fk_persona` FOREIGN KEY (`idPersona`) REFERENCES `personas` (`idPersona`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -415,7 +416,33 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` VALUES (1,1,'pajaroandres44@gmail.com','clave123'),(2,2,'alejandrapedraza2303@gmail.com','labelleza123'),(3,5,'pajarogabriel08@gmail.com','Andresesgenial');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ventas`
+--
+
+DROP TABLE IF EXISTS `ventas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ventas` (
+  `idVenta` int(11) NOT NULL AUTO_INCREMENT,
+  `idProveedor` int(11) NOT NULL,
+  `idServicio` int(11) NOT NULL,
+  `idUsuario` int(11) NOT NULL,
+  PRIMARY KEY (`idVenta`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ventas`
+--
+
+LOCK TABLES `ventas` WRITE;
+/*!40000 ALTER TABLE `ventas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ventas` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -427,4 +454,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-30 15:09:09
+-- Dump completed on 2020-04-06 17:09:14

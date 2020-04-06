@@ -8,7 +8,6 @@ public class ConnectionManagement {
 	
 	//Connection 
 	protected Connection connection;
-	protected String url= "";
 	protected String driver = "com.mysql.jdbc.Driver";
 	
 	//User and password of the DB

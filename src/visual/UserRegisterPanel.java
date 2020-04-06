@@ -1,5 +1,6 @@
 package visual;
 
+import java.awt.Choice;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,10 @@ import javax.swing.JTextField;
 
 import controller.Controller;
 import world.User;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import java.util.Calendar;
+import javax.swing.SpinnerNumberModel;
 
 /*
  * Andrés Felipe Pájaro Jurado
@@ -43,12 +48,9 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 	//Text Field
 	private JTextField namesTxt;
 	private JTextField lastnamesTxt;
-	private JTextField docTypeTxt;
 	private JTextField docNumberTxt;
 	private JTextField phoneNumberTxt;
 	private JTextField postalCodeTxt;
-	private JTextField birthTxt;
-	private JTextField genderTxt;
 	private JTextField emailTxt;
 	private JPasswordField passwordTxt;
 	private JPasswordField repeatPaswordTxt;
@@ -57,6 +59,17 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 	private JButton submit;
 	private JButton clean;
 	private JButton backToMenuBtn;
+	
+	//Drop-Down List
+	private Choice docTypeChoice;
+	private Choice genderTypeChoice;
+
+	//Birth with Format
+	private String birthFormat;
+	private JSpinner dayChoise;
+	private JSpinner monthChoise;
+	private JSpinner yearChoise;
+	
 	
 	public UserRegisterPanel(Controller ctrl, Main main) {
 		
@@ -103,7 +116,7 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 		this.add(postalCode);
 		
 		birth = new JLabel("Fecha de nacimiento");
-		birth.setBounds(150, 350, 150, 25);
+		birth.setBounds(150, 350, 120, 25);
 		this.add(birth);
 		
 		gender = new JLabel("Género");
@@ -131,9 +144,15 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 		lastnamesTxt.setBounds(300, 150, 300, 25);
 		this.add(lastnamesTxt);
 		
-		docTypeTxt = new JTextField();
-		docTypeTxt.setBounds(300, 190, 300, 25);
-		this.add(docTypeTxt);
+		//Drop-Down List for the document type
+		docTypeChoice = new Choice();
+		docTypeChoice.addItem("");
+		docTypeChoice.addItem("CC");
+		docTypeChoice.addItem("CE");
+		docTypeChoice.addItem("PA");
+		docTypeChoice.addItem("TI");
+		docTypeChoice.setBounds(300, 190, 300, 25);
+		this.add(docTypeChoice);
 
 		docNumberTxt = new JTextField();
 		docNumberTxt.setBounds(300, 230, 300, 25);
@@ -147,13 +166,16 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 		postalCodeTxt.setBounds(300, 310, 300, 25);
 		this.add(postalCodeTxt);
 		
-		birthTxt = new JTextField();
-		birthTxt.setBounds(300, 350, 300, 25);
-		this.add(birthTxt);
+		//Brith
 		
-		genderTxt = new JTextField();
-		genderTxt.setBounds(300, 390, 300, 25);
-		this.add(genderTxt);
+		//Drop-Down List for the gender
+		genderTypeChoice = new Choice();
+		genderTypeChoice.addItem("");
+		genderTypeChoice.addItem("Masculino");
+		genderTypeChoice.addItem("Femenino");
+		genderTypeChoice.addItem("Otro");
+		genderTypeChoice.setBounds(300, 390, 300, 25);
+		this.add(genderTypeChoice);
 		
 		emailTxt = new JTextField();
 		emailTxt.setBounds(300, 430, 300, 25);
@@ -181,36 +203,66 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 		backToMenuBtn.setBounds(680, 327, 178, 23);
 		backToMenuBtn.addActionListener(this);
 		add(backToMenuBtn);
+		
+		dayChoise = new JSpinner();
+		dayChoise.setModel(new SpinnerNumberModel(1, 1, 31, 1));
+		dayChoise.setBounds(448, 352, 39, 20);
+		add(dayChoise);
+		
+		monthChoise = new JSpinner();
+		monthChoise.setModel(new SpinnerNumberModel(1, 1, 12, 1));
+		monthChoise.setBounds(384, 352, 54, 20);
+		add(monthChoise);
+		
+		yearChoise = new JSpinner();
+		yearChoise.setModel(new SpinnerNumberModel(1950, 1950, 2020, 1));
+		yearChoise.setBounds(300, 352, 74, 20);
+		add(yearChoise);
+		
+		JLabel lblNewLabel = new JLabel("(YYYY-MM-DD)");
+		lblNewLabel.setBounds(509, 355, 82, 14);
+		add(lblNewLabel);
 	}
 	
 	public void cleanForm() {
 		namesTxt.setText("");
 		lastnamesTxt.setText("");
-		docTypeTxt.setText("");
 		docNumberTxt.setText("");
 		phoneNumberTxt.setText("");
 		postalCodeTxt.setText("");
-		birthTxt.setText("");
-		genderTxt.setText("");
 		emailTxt.setText("");
 		passwordTxt.setText("");
 		repeatPaswordTxt.setText("");
 	}
 	
+	public boolean formValidate() {
+		birthFormat();
+		if(namesTxt.getText().length() > 0 && lastnamesTxt.getText().length() > 0 && docTypeChoice.getSelectedItem().toString().length() > 0
+				&& docNumberTxt.getText().length() > 0 && phoneNumberTxt.getText().length() > 0 && postalCodeTxt.getText().length() > 0 
+				&& getBirthFormat().length() > 0 && genderTypeChoice.getSelectedItem().toString().length() > 0 && emailTxt.getText().length() > 0 
+				&& passwordTxt.getText().length() > 0 && repeatPaswordTxt.getText().length() > 0) {
+			System.out.println("Lleno");
+			return true;
+		}else {
+			System.out.print("Incompleto");
+			return false;
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equalsIgnoreCase("Registrame ahora")) {
-			if(true) {
+			if(formValidate() ) {
 				//Personal info
 				String names = namesTxt.getText();
 				String lastnames = lastnamesTxt.getText();
-				int docType = Integer.parseInt(docTypeTxt.getText());
+				int docType = docTypeConvertion();
 				String docNumber = docNumberTxt.getText();
 				String phoneNumber = phoneNumberTxt.getText();
 				String postalCode = postalCodeTxt.getText();
-				String date = birthTxt.getText();//Capture the String
+				String date = getBirthFormat();//Capture the String
 				Date birth = Date.valueOf(date);//Convert the String to sql.Date
-				int gender = Integer.parseInt(genderTxt.getText());
+				int gender = genderTypeConvertion();
 				
 				//Account data
 				String email = emailTxt.getText();
@@ -218,10 +270,14 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 				String verifyPassword = repeatPaswordTxt.getText();
 				
 				if(password.equals(verifyPassword)) {
-					//Create the user
-			        User user = new User(email, password, verifyPassword, names, lastnames, docType, docNumber, phoneNumber, postalCode, birth, gender); 
-			        
-			        ctrl.clientRegister(user);//Call the function, to register the new user
+					if(password.length() < 19) {
+						//Create the user
+				        User user = new User(email, password, verifyPassword, names, lastnames, docType, docNumber, phoneNumber, postalCode, birth, gender); 
+				        
+				        ctrl.clientRegister(user);//Call the function, to register the new user
+					}else {
+						JOptionPane.showMessageDialog(null, "Las contraseñas es demasiado larga", "Error", JOptionPane.WARNING_MESSAGE);
+					}
 				}else {
 					JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error", JOptionPane.WARNING_MESSAGE);
 				}
@@ -229,11 +285,48 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 			}else {
 				JOptionPane.showMessageDialog(null, "Por favor ingrese todos los datos", "Formulario incompleto", JOptionPane.WARNING_MESSAGE);
 			}
-		}else if(e.getActionCommand().equalsIgnoreCase("Limpiar")) {
+		}else if(e.getActionCommand().equalsIgnoreCase(clean.getText())) {
 			cleanForm();
 		}else if(e.getActionCommand().contentEquals(backToMenuBtn.getText())) {
 			main.backToMenu(this);
 		}
 	}
 
+	private int genderTypeConvertion() {
+		if(genderTypeChoice.getSelectedItem().equalsIgnoreCase("Masculino")) {
+			return 1;
+		}else if(genderTypeChoice.getSelectedItem().equalsIgnoreCase("Femenino")) {
+			return 2;
+		}else if(genderTypeChoice.getSelectedItem().equalsIgnoreCase("Otro")) {
+			return 3;
+		}else {
+			return -1;
+		}
+	}
+
+	private int docTypeConvertion() {
+		if(docTypeChoice.getSelectedItem().equalsIgnoreCase("CC")) {
+			return 1;
+		}else if(docTypeChoice.getSelectedItem().equalsIgnoreCase("CE")) {
+			return 2;
+		}else if(docTypeChoice.getSelectedItem().equalsIgnoreCase("PA")) {
+			return 3;
+		}else if(docTypeChoice.getSelectedItem().equalsIgnoreCase("TI")){
+			return 4;
+		}else {
+			return -1;
+		}
+	}
+
+	public void birthFormat() {
+		setBirthFormat(yearChoise.getValue()+"-"+monthChoise.getValue()+"-"+dayChoise.getValue());
+	}
+	
+	public String getBirthFormat() {
+		return birthFormat;
+	}
+
+	public void setBirthFormat(String birthFormat) {
+		this.birthFormat = birthFormat;
+	}
 }
