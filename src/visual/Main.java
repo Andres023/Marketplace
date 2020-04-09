@@ -3,7 +3,7 @@ package visual;
 import javax.swing.JFrame;
 
 import controller.Controller;
-import mysql.AdministratorManagment;
+
 /*
  * @author Andrés Pájaro
  * 

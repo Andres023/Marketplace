@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import controller.Controller;
-import world.User;
+import world.Administrator;
 
 public class AdministratorRegisterPanel extends JPanel implements ActionListener{
 	
@@ -264,10 +264,10 @@ public class AdministratorRegisterPanel extends JPanel implements ActionListener
 				
 				if(password.equals(verifyPassword)) {
 					if(password.length() < 19) {
-						//Create the user
-				        User user = new User(email, password, verifyPassword, names, lastnames, docType, docNumber, phoneNumber, postalCode, birth, gender); 
+						//Create the admin
+				        Administrator admin = new Administrator(email, password, verifyPassword, names, lastnames, docType, docNumber, phoneNumber, postalCode, birth, gender); 
 				        
-				        ctrl.clientRegister(user);//Call the function, to register the new user
+				        ctrl.adminRegister(admin);//Call the function, to register the new administrator
 					}else {
 						JOptionPane.showMessageDialog(null, "Las contraseñas es demasiado larga", "Error", JOptionPane.WARNING_MESSAGE);
 					}

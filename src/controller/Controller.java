@@ -2,9 +2,11 @@ package controller;
 
 import javax.swing.JOptionPane;
 
+import mysql.AdministratorManagement;
 import mysql.ClientManagement;
 import mysql.LoginManagement;
 import visual.Main;
+import world.Administrator;
 import world.User;
 
 /*
@@ -21,6 +23,9 @@ public class Controller {
 		this.main = main;
 	}
 	
+	/*
+	 * Register the client into the DB
+	 */
 	public void clientRegister(User user){
 
         //Create the registerClient Object
@@ -44,7 +49,33 @@ public class Controller {
         			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
         }
 	}
+	
+	/*
+	 * Register the administrator into the DB
+	 */
+	public void adminRegister(Administrator admin){
 
+        //Create the registerAdmin Object
+        AdministratorManagement register = new AdministratorManagement();
+        
+        //Insert the person in the DB
+        boolean insertPerson = register.registerPerson(admin);
+        
+        //If the insert has been success, now, insert the admin
+        if(insertPerson){
+        	boolean insertAdmin = register.registerAdmin(admin);
+        	if(insertAdmin) {
+	        	JOptionPane.showMessageDialog(null, "Los datos han sido insertados correctamente.\n"
+	        			+ "Por favor inicie sesión", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        	}else {
+        		JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
+            			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+        	}
+        }else {
+        	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
+        			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+        }
+	}
 	public void login(String email, String password) {
 		
 		//Create the loginMangement object

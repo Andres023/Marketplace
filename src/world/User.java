@@ -11,7 +11,6 @@ public class User extends Person{
 	//Attributes
 	private String email;
 	private String password;
-	private String verifyPassword;
 	
 	//Constructor
 	public User(String email, String password, String verifyPassword, String names, String lastnames, int docType, String docNumber, String phoneNumber, String postalCode, Date birth, int gender) {
