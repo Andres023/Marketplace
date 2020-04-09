@@ -103,10 +103,11 @@ public class MainPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(registerAdminBtn.getText())){
+			main.showAdministratorRegisterPanel();
 			System.out.println("1");
 			
 		}else if(e.getActionCommand().equals(registerUserBtn.getText())){
-			main.showRegisterPanel(register);
+			main.showUserRegisterPanel();
 			System.out.println("2");
 			
 		}else if(e.getActionCommand().equals(registerProviderBtn.getText())){

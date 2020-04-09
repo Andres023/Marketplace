@@ -5,27 +5,21 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import controller.Controller;
 import world.User;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
-import java.util.Calendar;
-import javax.swing.SpinnerNumberModel;
 
-/*
- * Andrés Felipe Pájaro Jurado
- * 
- * User's interface to register & create an account 
- */
-public class UserRegisterPanel extends JPanel implements ActionListener {
-
+public class AdministratorRegisterPanel extends JPanel implements ActionListener{
+	
 	//Utilities
 	Main main;
 	Controller ctrl;
@@ -69,9 +63,8 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 	private JSpinner dayChoise;
 	private JSpinner monthChoise;
 	private JSpinner yearChoise;
-	
-	
-	public UserRegisterPanel(Controller ctrl, Main main) {
+		
+	public AdministratorRegisterPanel(Controller ctrl, Main main) {
 		
 		this.main = main;
 		this.ctrl = ctrl;
@@ -288,7 +281,7 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 		}else if(e.getActionCommand().equalsIgnoreCase(clean.getText())) {
 			cleanForm();
 		}else if(e.getActionCommand().contentEquals(backToMenuBtn.getText())) {
-			main.userToMenu();
+			main.adminToMenu();
 		}
 	}
 
@@ -329,4 +322,5 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 	public void setBirthFormat(String birthFormat) {
 		this.birthFormat = birthFormat;
 	}
+
 }

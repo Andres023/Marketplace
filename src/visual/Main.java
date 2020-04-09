@@ -3,6 +3,7 @@ package visual;
 import javax.swing.JFrame;
 
 import controller.Controller;
+import mysql.AdministratorManagment;
 /*
  * @author Andrés Pájaro
  * 
@@ -13,6 +14,7 @@ public class Main extends JFrame{
 	private MainPanel pnlMain;
 	private UserRegisterPanel userRegister;
 	private WelcomePanel welcome;
+	private AdministratorRegisterPanel adminRegister;
 	
 	//Controller
 	private Controller ctrl; 
@@ -22,6 +24,7 @@ public class Main extends JFrame{
 		
 		userRegister = new UserRegisterPanel(ctrl, this);
 		welcome = new WelcomePanel(ctrl);
+		adminRegister = new AdministratorRegisterPanel(ctrl, this);
 		
 		setSize(900, 600);
 		setResizable(false);
@@ -38,14 +41,26 @@ public class Main extends JFrame{
 	/*
 	 * 
 	 */
-	public void showRegisterPanel(UserRegisterPanel register) {
+	public void showUserRegisterPanel() {
 		this.remove(pnlMain);
-		this.add(register);
+		this.add(userRegister);
 		screenRefresh();
 	}
 	
-	public void backToMenu(UserRegisterPanel userRegisterPanel) {
-		this.remove(userRegisterPanel);
+	public void showAdministratorRegisterPanel() {
+		this.remove(pnlMain);
+		this.add(adminRegister);
+		screenRefresh();
+	}
+	
+	public void userToMenu() {
+		this.remove(userRegister);
+		this.add(pnlMain);
+		screenRefresh();
+	}
+	
+	public void adminToMenu() {
+		this.remove(adminRegister);
 		this.add(pnlMain);
 		screenRefresh();
 	}
