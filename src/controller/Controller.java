@@ -5,8 +5,13 @@ import javax.swing.JOptionPane;
 import mysql.AdministratorManagement;
 import mysql.ClientManagement;
 import mysql.LoginManagement;
+import mysql.ProviderManagement;
+import mysql.ServiceManagement;
 import visual.Main;
 import world.Administrator;
+import world.Provider;
+import world.Service;
+import world.Session;
 import world.User;
 
 /*
@@ -17,10 +22,19 @@ import world.User;
  */
 public class Controller {
 	
-	Main main;
+	private Main main;
+	private Session session;
 	
 	public Controller(Main main) {
 		this.main = main;
+	}
+	
+	public void startSession(int id, int typeOfPerson) {
+		session = new Session(id, typeOfPerson);
+	}
+	
+	public void destroySession(Session session) {
+		
 	}
 	
 	/*
@@ -42,11 +56,11 @@ public class Controller {
 	        			+ "Por favor inicie sesión", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         	}else {
         		JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
-            			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+            			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
         	}
         }else {
         	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
-        			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
         }
 	}
 	
@@ -69,28 +83,119 @@ public class Controller {
 	        			+ "Por favor inicie sesión", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         	}else {
         		JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
-            			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+            			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
         	}
         }else {
         	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
-        			+ "Por favor inténtelo nuevamente", "Éxito", JOptionPane.WARNING_MESSAGE);
+        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
         }
 	}
-	public void login(String email, String password) {
+	
+	/*
+	 * Register the provider by an administrator into the DB
+	 */
+	public void providerRegister(Provider provider) {
+		
+		//Create the providerManagemet object
+		ProviderManagement register = new ProviderManagement();
+		
+		//Insert the provider into the DB
+		boolean insertProvider = register.registerProvider(provider);
+        
+        //If the insert has been success, now, insert the provider
+        if(insertProvider){
+        	JOptionPane.showMessageDialog(null, "Los datos han sido insertados correctamente.\n"
+        			+ "Por favor inicie sesión", "Error", JOptionPane.INFORMATION_MESSAGE);
+     
+        }else {
+        	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
+        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+		
+	}
+
+	/*
+	 * The next three functions are used to verify if the login is possible
+	 */
+	
+	public int userLogin(String email, String password) {
 		
 		//Create the loginMangement object
 		LoginManagement login = new LoginManagement();
 		
-		int loginStatus = login.login(email, password);
+		int loginStatus = login.loginUser(email, password);
 		
 		if(loginStatus > 0) {
 			System.out.println("Éxito");
-			main.showWelcomePanel();
+			return 1; 
 			
 		}else {
-			JOptionPane.showMessageDialog(null, "El correo o la contraseña son incorrectos.\n"
-        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+			return -1;
 		}
+	}
+	
+	public int adminLogin(String email, String password) {
+		
+		//Create the loginMangement object
+		LoginManagement login = new LoginManagement();
+		
+		int loginStatus = login.loginAdmin(email, password);
+		
+		if(loginStatus > 0) {
+			System.out.println("Éxito");
+			return 2;
+				
+		}else {
+			return -1;
+		}
+		
+	}
+	
+	public int providerLogin(String email, String password) {
+		
+		//Create the loginMangement object
+		LoginManagement login = new LoginManagement();
+		
+		int loginStatus = login.loginProvider(email, password, this);
+		
+		if(loginStatus > 0) {
+			System.out.println("Éxito");
+			return 3;
+				
+		}else {
+			return -1;
+		}
+	}
+	
+	public void showWelcomePanel(int typeofPerson) {
+		//If typeOfPerson is equal than 1 show the userPanel
+		//If typeOfPerson is equal than 2 show the administratorPanel
+		if(typeofPerson == 1) {
+			main.showUserWelcomePanel();
+		}else if(typeofPerson == 2) {
+			main.showAdminWelcomePanel();
+		}else if(typeofPerson == 3) {
+			main.showProivderWelcomePanel();
+		}
+	}
+
+	/*
+	 * Publish a service and make visible for users
+	 */
+	public void publishService(Service service) {
+		
+		 //Create the registerClient Object
+		ServiceManagement register = new ServiceManagement(session);
+        
+        //Insert the service in the DB
+        boolean publishService = register.registerService(service);
+        
+        if(publishService) {
+        	JOptionPane.showMessageDialog(null, "Servicio publicado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        }else {
+        	JOptionPane.showMessageDialog(null, "No se han podido publicar el serivicio\nInténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+		
 	}
 
 }

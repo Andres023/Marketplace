@@ -17,15 +17,13 @@ import world.Administrator;
 public class AdministratorManagement extends ConnectionManagement{
 	
 	public AdministratorManagement() {
-		try {
-			openConnection();
-		}catch (Exception ex) {
-			
-		}
+
 	}
 	
 	public boolean registerPerson(Administrator admin){
 		try {
+			openConnection();
+			
 			//Declare the SQL statement
         	String sql=" INSERT INTO personas (nombres,apellidos,tipoDoc,numDoc,telefono,codigoPostal,fechaNacimiento,genero) VALUES (?,?,?,?,?,?,?,?)";
         	
@@ -45,21 +43,27 @@ public class AdministratorManagement extends ConnectionManagement{
 				
 				//If the INSERT has been success, now we can INSERT the admin info (email & password)
 				if(result > 0) {
+					closeConnection();
 					return true;
 				}else {
+					closeConnection();
 					return false;
 				}
 			}else {
+				closeConnection();
 				return false;
 			}
 						
 		}catch(SQLException ex) {
+			closeConnection();
 			Logger.getLogger(AdministratorManagement.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
 	}
 	
 	public boolean registerAdmin(Administrator admin) {
+		
+		openConnection();
 		
 		try {
 			String sql = "INSERT INTO administradores (idPersona, correo, clave) VALUES (?,?,?)";
@@ -75,14 +79,18 @@ public class AdministratorManagement extends ConnectionManagement{
 				
 				int result = prepare.executeUpdate();
 				if(result > 0) {
+					closeConnection();
 					return true;
 				}else {
+					closeConnection();
 					return false;
 				}
 			}else {
+				closeConnection();
 				return false;
 			}
 		}catch (SQLException ex) {
+			closeConnection();
 			Logger.getLogger(AdministratorManagement.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}

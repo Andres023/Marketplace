@@ -17,15 +17,13 @@ import world.User;
 public class ClientManagement extends ConnectionManagement{
 	
 	public ClientManagement() {
-		try {
-			openConnection();
-		}catch (Exception ex) {
-			
-		}
+		
 	}
 	
 	public boolean registerPerson(User user){
 		try {
+			openConnection();
+			
 			//Declare the SQL statement
         	String sql=" INSERT INTO personas (nombres,apellidos,tipoDoc,numDoc,telefono,codigoPostal,fechaNacimiento,genero) VALUES (?,?,?,?,?,?,?,?)";
         	
@@ -45,15 +43,19 @@ public class ClientManagement extends ConnectionManagement{
 				
 				//If the INSERT has been success, now we can INSERT the user info (email & password)
 				if(result > 0) {
+					closeConnection();
 					return true;
 				}else {
+					closeConnection();
 					return false;
 				}
 			}else {
+				closeConnection();
 				return false;
 			}
 						
 		}catch(SQLException ex) {
+			closeConnection();
 			Logger.getLogger(ClientManagement.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
@@ -62,6 +64,9 @@ public class ClientManagement extends ConnectionManagement{
 	public boolean registerUser(User user) {
 		
 		try {
+			
+			openConnection();
+			
 			String sql = "INSERT INTO usuarios (idPersona, correo, clave) VALUES (?,?,?)";
 			
 			PreparedStatement prepare = connection.prepareStatement(sql);
@@ -75,14 +80,18 @@ public class ClientManagement extends ConnectionManagement{
 				
 				int result = prepare.executeUpdate();
 				if(result > 0) {
+					closeConnection();
 					return true;
 				}else {
+					closeConnection();
 					return false;
 				}
 			}else {
+				closeConnection();
 				return false;
 			}
 		}catch (SQLException ex) {
+			closeConnection();
 			Logger.getLogger(ClientManagement.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}

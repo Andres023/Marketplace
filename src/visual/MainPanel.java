@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 
@@ -16,7 +18,7 @@ public class MainPanel extends JPanel implements ActionListener {
 	
 	//Components
 	private Main main;
-	private WelcomePanel welcome;
+	private WelcomeUserPanel welcome;
 	private UserRegisterPanel register;
 	private Controller ctrl;
 	
@@ -31,10 +33,9 @@ public class MainPanel extends JPanel implements ActionListener {
 	private JButton loginBtn;
 	private JButton registerUserBtn;
 	private JButton registerAdminBtn;
-	private JButton registerProviderBtn;
 	private JLabel lblNewLabel;
 	
-	public MainPanel(Main main, WelcomePanel welcome, UserRegisterPanel register, Controller ctrl) {
+	public MainPanel(Main main, WelcomeUserPanel welcome, UserRegisterPanel register, Controller ctrl) {
 		
 		//Components
 		this.main = main;
@@ -84,19 +85,14 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(lblNewLabel);
 		
 		registerUserBtn = new JButton("Usuario");
-		registerUserBtn.setBounds(360, 448, 176, 40);
+		registerUserBtn.setBounds(550, 448, 176, 40);
 		registerUserBtn.addActionListener(this);
 		add(registerUserBtn);
 		
 		registerAdminBtn = new JButton("Administrador");
-		registerAdminBtn.setBounds(100, 451, 192, 35);
+		registerAdminBtn.setBounds(206, 451, 192, 35);
 		registerAdminBtn.addActionListener(this);
 		add(registerAdminBtn);
-		
-		registerProviderBtn = new JButton("Proveedor");
-		registerProviderBtn.setBounds(621, 448, 176, 40);
-		registerProviderBtn.addActionListener(this);
-		add(registerProviderBtn);
 		
 	}
 	
@@ -110,18 +106,30 @@ public class MainPanel extends JPanel implements ActionListener {
 			main.showUserRegisterPanel();
 			System.out.println("2");
 			
-		}else if(e.getActionCommand().equals(registerProviderBtn.getText())){
-			System.out.println("3");
-			
 		}else if(e.getActionCommand().equals(loginBtn.getText())) {
 			//Get data of the login form
 			String email = emailTxt.getText();
 			String password = passwordTxt.getText();
 			
-			//Calls the login function
-			ctrl.login(email, password);
-			
-			System.out.println("Login");
-		}
+			//Calls the login functions to verify if the person that wants login is a user, administrator 
+			//or a not registered person
+			if(ctrl.userLogin(email, password) == 1) {
+				System.out.print("User");
+				ctrl.showWelcomePanel(1);
+			}else if(ctrl.adminLogin(email, password) == 2){
+				System.out.print("Admin");
+				ctrl.showWelcomePanel(2);
+			}else if(ctrl.providerLogin(email, password) == 3){
+				System.out.println("Provider");
+				ctrl.showWelcomePanel(3);
+			}else
+				JOptionPane.showMessageDialog(null, "El correo o la contraseña son incorrectos.\n"
+	        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+	}
+
+	public void refresh() {
+		emailTxt.setText("");
+		passwordTxt.setText("");
 	}
 }
