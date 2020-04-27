@@ -13,7 +13,7 @@ public class LoginManagement extends ConnectionManagement{
 	}
 	
 	//Verify if the user exist in the DB
-	public int loginUser (String email, String password) {
+	public int loginUser (String email, String password, Controller ctrl) {
 		
 		openConnection();
 		
@@ -32,6 +32,7 @@ public class LoginManagement extends ConnectionManagement{
 			}
 			
 			if(id > 0) {
+				ctrl.startSession(id, 1);
 				closeConnection();
 				return id;
 			}else {

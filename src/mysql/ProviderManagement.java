@@ -26,9 +26,11 @@ public class ProviderManagement extends ConnectionManagement{
 			int result = prepare.executeUpdate();
 			
 			if(result > 0) {
+				connection.commit();
 				closeConnection();
 				return true;
 			}else {
+				connection.rollback();
 				closeConnection();
 				return false;
 			}

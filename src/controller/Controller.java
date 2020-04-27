@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import mysql.AdministratorManagement;
@@ -33,8 +35,9 @@ public class Controller {
 		session = new Session(id, typeOfPerson);
 	}
 	
-	public void destroySession(Session session) {
-		
+	public void destroySession() {
+		session.setId(0);
+		session.setTypeOfPerson(0);
 	}
 	
 	/*
@@ -43,7 +46,7 @@ public class Controller {
 	public void clientRegister(User user){
 
         //Create the registerClient Object
-        ClientManagement register = new ClientManagement();
+        ClientManagement register = new ClientManagement(session);
         
         //Insert the client in the DB
         boolean insertPerson = register.registerPerson(user);
@@ -62,6 +65,32 @@ public class Controller {
         	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
         			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
         }
+	}
+	
+	/*
+	 * Returns the offer data searched by name
+	 */
+	public ArrayList<String> searchOfferByName(String offerName) {
+		System.out.println(session.getTypeOfPerson());
+		
+		ClientManagement client = new ClientManagement(session);
+		ArrayList<String> offer = client.searchOfferByName(offerName);
+		if(offer != null) {
+			System.out.println(offer);
+			return offer;
+		}else {
+			System.out.println("Algo flayó :c");
+			return null;
+		}
+	}
+	
+	/*
+	 * Returns the offer's description by ID
+	 */
+	public int [] searchOfferDescription(int ID) {
+		ClientManagement client = new ClientManagement(session);
+		int [] description = client.searchOfferDescription(ID);
+		return description;
 	}
 	
 	/*
@@ -123,7 +152,7 @@ public class Controller {
 		//Create the loginMangement object
 		LoginManagement login = new LoginManagement();
 		
-		int loginStatus = login.loginUser(email, password);
+		int loginStatus = login.loginUser(email, password, this);
 		
 		if(loginStatus > 0) {
 			System.out.println("Éxito");
@@ -195,6 +224,14 @@ public class Controller {
         }else {
         	JOptionPane.showMessageDialog(null, "No se han podido publicar el serivicio\nInténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
         }
+		
+	}
+	
+	public void searchProvider() {
+		
+	}
+	
+	public void searchService() {
 		
 	}
 

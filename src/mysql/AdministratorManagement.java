@@ -43,9 +43,11 @@ public class AdministratorManagement extends ConnectionManagement{
 				
 				//If the INSERT has been success, now we can INSERT the admin info (email & password)
 				if(result > 0) {
+					connection.commit();
 					closeConnection();
 					return true;
 				}else {
+					connection.rollback();
 					closeConnection();
 					return false;
 				}

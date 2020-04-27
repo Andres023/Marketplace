@@ -25,6 +25,9 @@ public class ServiceManagement extends ConnectionManagement{
 	public int getIDDescription(Service service) {
 		
 		try {
+			
+			openConnection();
+			
 			String sql = "INSERT INTO descripcion (transporte,hotel,alimento) VALUES (?,?,?)";
 			PreparedStatement prepare = connection.prepareStatement(sql);
 			
@@ -47,8 +50,12 @@ public class ServiceManagement extends ConnectionManagement{
 				}
 				
 				if(id > 0) {
+					connection.commit();
+					closeConnection();
 					return id;
 				}else {
+					connection.rollback();
+					closeConnection();
 					return -1;
 				}
 				
@@ -128,17 +135,21 @@ public class ServiceManagement extends ConnectionManagement{
 					result = prepare.executeUpdate();
 					
 					if(result > 0) {
+						connection.commit();
 						closeConnection();
 						return true; //The INSERT has been success
 					}else {
+						connection.rollback();
 						closeConnection();
 						return false;
 					}
 				}else {
+					connection.rollback();
 					closeConnection();
 					return false;
 				}
 			}else {
+				connection.rollback();
 				closeConnection();
 				return false;
 			}
@@ -147,6 +158,10 @@ public class ServiceManagement extends ConnectionManagement{
 			Logger.getLogger(ClientManagement.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
+	}
+	
+	public void searchServiceByName() {
+		
 	}
 		
 }

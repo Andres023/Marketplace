@@ -21,6 +21,7 @@ public class ConnectionManagement {
 		try{
 			Class.forName(driver).newInstance();
 			connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1/marketpalce?user="+user+"&password="+password);
+			connection.setAutoCommit(false);
 			return true;
 		}catch (Exception ex){
 			return false;

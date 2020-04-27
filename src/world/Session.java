@@ -11,8 +11,6 @@ public class Session {
 		this.id = id;
 		this.typeOfPerson = typeOfPerson;
 	}
-
-	
 	
 	
 	//Setters & Getters

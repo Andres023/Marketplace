@@ -3,8 +3,11 @@ package mysql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import world.Session;
 import world.User;
 
 /*
@@ -16,8 +19,11 @@ import world.User;
  */
 public class ClientManagement extends ConnectionManagement{
 	
-	public ClientManagement() {
-		
+	//Contains important data about the person who is logged in 
+	private Session session;
+	
+	public ClientManagement(Session session) {
+		this.session = session;
 	}
 	
 	public boolean registerPerson(User user){
@@ -43,9 +49,11 @@ public class ClientManagement extends ConnectionManagement{
 				
 				//If the INSERT has been success, now we can INSERT the user info (email & password)
 				if(result > 0) {
+					connection.commit();
 					closeConnection();
 					return true;
 				}else {
+					connection.rollback();
 					closeConnection();
 					return false;
 				}
@@ -80,13 +88,16 @@ public class ClientManagement extends ConnectionManagement{
 				
 				int result = prepare.executeUpdate();
 				if(result > 0) {
+					connection.commit();
 					closeConnection();
 					return true;
 				}else {
+					connection.rollback();
 					closeConnection();
 					return false;
 				}
 			}else {
+				connection.rollback();
 				closeConnection();
 				return false;
 			}
@@ -119,6 +130,71 @@ public class ClientManagement extends ConnectionManagement{
 			ex.printStackTrace();
 		}
 		return id;
+	}
+
+	public ArrayList<String> searchOfferByName(String offerName) {
+		try {
+			
+			openConnection();
+			
+			String offerLike = "%"+offerName+"%";
+			String sql = "SELECT nombreServicio, costo, fechaPublicacion, ciudadOrigen, descripcion, ciudadDestino FROM servicios WHERE nombreServicio LIKE " + "\'"+offerLike+"\'" ;
+			
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			ResultSet resulSet = prepare.executeQuery();
+			
+			ArrayList<String> offer = new ArrayList<String>();
+			
+			if(resulSet.next()) {
+				offer.add(resulSet.getString(1));
+				offer.add(resulSet.getInt(2)+"");
+				offer.add(resulSet.getDate(3)+"");
+				offer.add(resulSet.getString(4));
+				offer.add(resulSet.getInt(5)+"");
+				offer.add(resulSet.getString(6));
+				
+				closeConnection();
+				
+				return offer;
+			}else {
+				closeConnection();
+				return null;
+			}
+		}catch(Exception ex) {
+			closeConnection();
+			return null;
+		}
+		
+	}
+
+	public int[] searchOfferDescription(int ID) {
+		
+		int description [] = new int [3]; 
+		
+		try {
+			openConnection();
+			String sql = "SELECT * FROM descripcion WHERE idDescripcion = " + ID;
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			ResultSet resulSet = prepare.executeQuery();
+			
+			if(resulSet.next()) {
+				
+				description [0] = resulSet.getInt(2);
+				description [1] = resulSet.getInt(3);
+				description [2] = resulSet.getInt(4);
+				
+				closeConnection();
+				
+				return description;
+			}else {
+				closeConnection();
+				return null;
+			}
+			
+		}catch (Exception ex) {
+			closeConnection();
+			return null;
+		}
 	}
 	
 }

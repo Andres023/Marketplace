@@ -177,7 +177,7 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 				
 			}else {
 				JOptionPane.showMessageDialog(null, "Por favor rellene todos los campos", "Formulario incompleto", JOptionPane.WARNING_MESSAGE);
-			}
+			}	
 			
 		}else if(e.getActionCommand().equalsIgnoreCase(showSales.getText())) {
 			

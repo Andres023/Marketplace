@@ -124,7 +124,7 @@ public class MainPanel extends JPanel implements ActionListener {
 				ctrl.showWelcomePanel(3);
 			}else
 				JOptionPane.showMessageDialog(null, "El correo o la contraseña son incorrectos.\n"
-	        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+	        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 	}
 
