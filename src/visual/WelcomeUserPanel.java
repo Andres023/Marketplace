@@ -160,26 +160,29 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		panelOffer.add(destination);
 		
 		transport = new JLabel("Transporte ");
-		transport.setBounds(10, 85, 97, 14);
+		transport.setBounds(10, 85, 92, 14);
 		panelOffer.add(transport);
 		
 		hotel = new JLabel("Hotel");
-		hotel.setBounds(10, 105, 97, 14);
+		hotel.setBounds(10, 105, 92, 14);
 		panelOffer.add(hotel);
 		
 		food = new JLabel("Alimento");
-		food.setBounds(10, 125, 97, 14);
+		food.setBounds(10, 125, 92, 14);
 		panelOffer.add(food);
 		
 		transportRbtn = new JRadioButton("");
+		transportRbtn.setEnabled(false);
 		transportRbtn.setBounds(79, 82, 31, 23);
 		panelOffer.add(transportRbtn);
 		
 		hotelRbtn = new JRadioButton("");
+		hotelRbtn.setEnabled(false);
 		hotelRbtn.setBounds(79, 101, 31, 23);
 		panelOffer.add(hotelRbtn);
 		
 		foodRbtn = new JRadioButton("");
+		foodRbtn.setEnabled(false);
 		foodRbtn.setBounds(79, 121, 31, 23);
 		panelOffer.add(foodRbtn);
 		
