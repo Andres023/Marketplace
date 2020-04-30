@@ -26,7 +26,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	private JButton logOutBtn;
 	private JButton searchOfferBtn;
 	private JButton searchProviderBtn;
-	
+	private JButton buyServiceBtn;
 	
 	private JTextField searchOffer;
 	private JTextField searchProvider;
@@ -49,8 +49,12 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	private JRadioButton hotelRbtn;
 	private JRadioButton foodRbtn;
 	
-	private int description [];
+	private JPanel panelOffer;
 	
+	private int description [];
+	private int serviceId;
+	
+	private BuyWindow buyWindow;
 	
 	public WelcomeUserPanel(Controller ctrl, Main main) {
 		this.ctrl = ctrl;
@@ -104,7 +108,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		transactionsLbl.setBounds(545, 97, 265, 33);
 		add(transactionsLbl);
 		
-		JPanel panelOffer = new JPanel();
+		panelOffer = new JPanel();
 		panelOffer.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		panelOffer.setLayout(null);
 		panelOffer.setBounds(62, 211, 385, 154);
@@ -186,10 +190,22 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		foodRbtn.setBounds(79, 121, 31, 23);
 		panelOffer.add(foodRbtn);
 		
+		buyServiceBtn = new JButton("Comprar");
+		buyServiceBtn.setBounds(286, 11, 89, 23);
+		buyServiceBtn.addActionListener(this);
+		
+		
 		JLabel searchOfferLbl = new JLabel("Buscar ofertas\r\n");
 		searchOfferLbl.setBounds(62, 136, 194, 33);
 		add(searchOfferLbl);
 		searchOfferLbl.setFont(new Font("Tahoma", Font.BOLD, 15));
+	}
+	
+	/*
+	 * Calls the controller to buy the service
+	 */
+	public void makeTransaction() {
+		ctrl.makeTransaction(serviceId);
 	}
 
 	@Override
@@ -199,13 +215,18 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 				
 				ArrayList<String> offer = ctrl.searchOfferByName(searchOffer.getText());
 				if(offer != null) {
-					nameOffer.setText(offer.get(0));
-					costOffer.setText(offer.get(1) + " COP");
-					publishDate.setText(offer.get(2));
-					originCity.setText("De: " + offer.get(3));
-					destinationCity.setText("A: " + offer.get(5));
 					
-					description = ctrl.searchOfferDescription(Integer.parseInt(offer.get(4)));
+					//Show the service information
+
+					serviceId = Integer.parseInt(offer.get(0));System.out.println(serviceId);
+					
+					nameOffer.setText(offer.get(1));
+					costOffer.setText(offer.get(2) + " COP");
+					publishDate.setText(offer.get(3));
+					originCity.setText("De: " + offer.get(4));
+					destinationCity.setText("A: " + offer.get(6));
+					
+					description = ctrl.searchOfferDescription(Integer.parseInt(offer.get(5)));
 					if(description[0] == 1) {
 						transportRbtn.setSelected(true);
 					}else {
@@ -222,6 +243,9 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 						foodRbtn.setSelected(false);
 					}
 					
+					//Show the buy button
+					panelOffer.add(buyServiceBtn);
+					this.repaint();
 				}else {
 					JOptionPane.showMessageDialog(null, "No existen ofertas que coincidan con su búsqueda", "Búsqueda no encontrada", JOptionPane.WARNING_MESSAGE);
 				}
@@ -234,6 +258,11 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		}else if(e.getActionCommand().equalsIgnoreCase(logOutBtn.getText())) {
 			ctrl.destroySession();
 			main.userWelcomeToMenu();
+		}else if(e.getActionCommand().equalsIgnoreCase(buyServiceBtn.getText())) {
+			int option = JOptionPane.showConfirmDialog(null, "Está a punto de comprar este servicio\n¿Está Seguro que desea continuar?", "¿Continuar?", JOptionPane.YES_NO_OPTION);
+			if(option == JOptionPane.YES_OPTION) {
+				buyWindow = new BuyWindow(this);
+			}
 		}
 	}
 }

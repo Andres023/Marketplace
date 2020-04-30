@@ -226,13 +226,17 @@ public class Controller {
         }
 		
 	}
-	
-	public void searchProvider() {
-		
-	}
-	
-	public void searchService() {
-		
+
+	/*
+	 * If the bank account meets the requirements make the transaction
+	 */
+	public void makeTransaction(int serviceId) {
+		ClientManagement client = new ClientManagement(session);
+		boolean status = client.buyService(session.getId(), serviceId);
+		if(status) {
+			System.out.println("Éxito");
+			JOptionPane.showMessageDialog(null, "Su compra se ha realizado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
 }

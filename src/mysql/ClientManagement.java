@@ -138,7 +138,7 @@ public class ClientManagement extends ConnectionManagement{
 			openConnection();
 			
 			String offerLike = "%"+offerName+"%";
-			String sql = "SELECT nombreServicio, costo, fechaPublicacion, ciudadOrigen, descripcion, ciudadDestino FROM servicios WHERE nombreServicio LIKE " + "\'"+offerLike+"\'" ;
+			String sql = "SELECT idServicio, nombreServicio, costo, fechaPublicacion, ciudadOrigen, descripcion, ciudadDestino FROM servicios WHERE nombreServicio LIKE " + "\'"+offerLike+"\'" ;
 			
 			PreparedStatement prepare = connection.prepareStatement(sql);
 			ResultSet resulSet = prepare.executeQuery();
@@ -146,12 +146,13 @@ public class ClientManagement extends ConnectionManagement{
 			ArrayList<String> offer = new ArrayList<String>();
 			
 			if(resulSet.next()) {
-				offer.add(resulSet.getString(1));
-				offer.add(resulSet.getInt(2)+"");
-				offer.add(resulSet.getDate(3)+"");
-				offer.add(resulSet.getString(4));
-				offer.add(resulSet.getInt(5)+"");
-				offer.add(resulSet.getString(6));
+				offer.add(resulSet.getInt(1)+"");
+				offer.add(resulSet.getString(2));
+				offer.add(resulSet.getInt(3)+"");
+				offer.add(resulSet.getDate(4)+"");
+				offer.add(resulSet.getString(5));
+				offer.add(resulSet.getInt(6)+"");
+				offer.add(resulSet.getString(7));
 				
 				closeConnection();
 				
@@ -194,6 +195,51 @@ public class ClientManagement extends ConnectionManagement{
 		}catch (Exception ex) {
 			closeConnection();
 			return null;
+		}
+	}
+	
+	//Access to the database and complete the transaction
+	public boolean buyService(int userId, int serviceId) {
+		
+		try {
+			openConnection();
+			
+			//Make the payment (NOT YET)
+			
+			//Give the service
+			//1. Get the all information required in the database
+			String sql = "SELECT proveedor FROM proveedores_servicios WHERE servicio = " + serviceId;
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			ResultSet resulSet = prepare.executeQuery();
+			int providerId;
+			
+			if(resulSet.next()) {
+				providerId = resulSet.getInt(1);
+			}else {
+				return false;
+			}
+			
+			connection.setAutoCommit(false);
+			sql = "INSERT INTO ventas (idProveedor, idServicio, IdUsuario) VALUES (?,?,?)";
+			prepare = connection.prepareStatement(sql);
+			prepare.setInt(1, providerId);
+			prepare.setInt(2, serviceId);
+			prepare.setInt(3, userId);
+			
+			int resul = prepare.executeUpdate();
+			if(resul > 0) {
+				connection.commit();
+				closeConnection();
+				return true;
+			}else {
+				connection.rollback();
+				closeConnection();
+				return false;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			closeConnection();
+			return false;
 		}
 	}
 	
