@@ -103,6 +103,9 @@ public class ServiceManagement extends ConnectionManagement{
 			int description = getIDDescription(service);
 			
 			if(description > 0) {
+				
+				connection.setAutoCommit(false);
+				
 				String sql = "INSERT INTO servicios (nombreServicio, costo, fechaPublicacion, ciudadOrigen, descripcion, ciudadDestino) VALUES (?,?,?,?,?,?)";
 				PreparedStatement prepare = connection.prepareStatement(sql);
 				

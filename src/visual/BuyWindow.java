@@ -20,12 +20,16 @@ public class BuyWindow extends JFrame implements ActionListener{
 	private JTextField securityCode;
 	private JButton submitBtn;
 	
-	public BuyWindow(WelcomeUserPanel user) {
+	private String reserveStatus;
+	
+	public BuyWindow(WelcomeUserPanel user, String reserveStatus) {
 		
 		this.user = user;
+		this.reserveStatus = reserveStatus;
 		
 		setTitle("Compar un servicio");
 		setSize(425,460);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 		
@@ -111,8 +115,8 @@ public class BuyWindow extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equalsIgnoreCase(submitBtn.getText())) {
 			System.out.println("Comprar");
-			user.makeTransaction();
-			this.getDefaultCloseOperation();
+			user.makeTransaction(reserveStatus);
+			this.dispose();
 		}
 	}
 }

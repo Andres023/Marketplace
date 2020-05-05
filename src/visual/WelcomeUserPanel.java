@@ -27,6 +27,8 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	private JButton searchOfferBtn;
 	private JButton searchProviderBtn;
 	private JButton buyServiceBtn;
+	private JButton reserveServiceBtn;
+	private JButton payReservation;
 	
 	private JTextField searchOffer;
 	private JTextField searchProvider;
@@ -44,6 +46,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	private JLabel transport;
 	private JLabel hotel;
 	private JLabel food;
+	private JLabel pendingPayLbl;
 	
 	private JRadioButton transportRbtn;
 	private JRadioButton hotelRbtn;
@@ -90,28 +93,28 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		
 		JLabel searchProviderLbl = new JLabel("Buscar proveedores\r\n");
 		searchProviderLbl.setFont(new Font("Tahoma", Font.BOLD, 15));
-		searchProviderLbl.setBounds(62, 376, 194, 33);
+		searchProviderLbl.setBounds(62, 425, 194, 33);
 		add(searchProviderLbl);
 		
 		searchProvider = new JTextField();
 		searchProvider.setColumns(10);
-		searchProvider.setBounds(62, 423, 291, 20);
+		searchProvider.setBounds(62, 472, 291, 20);
 		add(searchProvider);
 		
 		searchProviderBtn = new JButton("Buscar");
-		searchProviderBtn.setBounds(358, 420, 89, 23);
+		searchProviderBtn.setBounds(358, 469, 89, 23);
 		searchProvider.addActionListener(this);
 		add(searchProviderBtn);
 		
 		JLabel transactionsLbl = new JLabel("Historial de transacciones");
 		transactionsLbl.setFont(new Font("Tahoma", Font.BOLD, 15));
-		transactionsLbl.setBounds(545, 97, 265, 33);
+		transactionsLbl.setBounds(500, 97, 265, 33);
 		add(transactionsLbl);
 		
 		panelOffer = new JPanel();
 		panelOffer.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		panelOffer.setLayout(null);
-		panelOffer.setBounds(62, 211, 385, 154);
+		panelOffer.setBounds(62, 211, 385, 203);
 		add(panelOffer);
 		
 		textField = new JTextField();
@@ -120,92 +123,116 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		
 		costOffer = new JTextField();
 		costOffer.setEditable(false);
-		costOffer.setBounds(50, 55, 114, 20);
+		costOffer.setBounds(60, 87, 114, 20);
 		panelOffer.add(costOffer);
 		costOffer.setColumns(10);
 		
 		publishDate = new JTextField();
 		publishDate.setEditable(false);
-		publishDate.setBounds(297, 117, 78, 20);
+		publishDate.setBounds(297, 149, 78, 20);
 		panelOffer.add(publishDate);
 		publishDate.setColumns(10);
 		
 		nameOffer = new JLabel("");
-		nameOffer.setBounds(10, 11, 194, 33);
+		nameOffer.setBounds(10, 20, 194, 33);
 		panelOffer.add(nameOffer);
 		nameOffer.setFont(new Font("Tahoma", Font.BOLD, 15));
 		
 		originCity = new JTextField();
 		originCity.setEditable(false);
 		originCity.setColumns(10);
-		originCity.setBounds(261, 55, 114, 20);
+		originCity.setBounds(261, 87, 114, 20);
 		panelOffer.add(originCity);
 		
 		destinationCity = new JTextField();
 		destinationCity.setEditable(false);
 		destinationCity.setColumns(10);
-		destinationCity.setBounds(261, 86, 114, 20);
+		destinationCity.setBounds(261, 118, 114, 20);
 		panelOffer.add(destinationCity);
 		
 		costLbl = new JLabel("Costo");
-		costLbl.setBounds(10, 58, 46, 14);
+		costLbl.setBounds(10, 88, 46, 14);
 		panelOffer.add(costLbl);
 		
 		dateLbl = new JLabel("Fecha de publicaci\u00F3n");
-		dateLbl.setBounds(169, 120, 127, 14);
+		dateLbl.setBounds(167, 155, 127, 14);
 		panelOffer.add(dateLbl);
 		
 		origin = new JLabel("Origen");
-		origin.setBounds(211, 58, 46, 14);
+		origin.setBounds(209, 93, 46, 14);
 		panelOffer.add(origin);
 		
 		destination = new JLabel("Destino");
-		destination.setBounds(211, 89, 46, 14);
+		destination.setBounds(209, 124, 46, 14);
 		panelOffer.add(destination);
 		
 		transport = new JLabel("Transporte ");
-		transport.setBounds(10, 85, 92, 14);
+		transport.setBounds(10, 115, 92, 14);
 		panelOffer.add(transport);
 		
 		hotel = new JLabel("Hotel");
-		hotel.setBounds(10, 105, 92, 14);
+		hotel.setBounds(10, 135, 92, 14);
 		panelOffer.add(hotel);
 		
 		food = new JLabel("Alimento");
-		food.setBounds(10, 125, 92, 14);
+		food.setBounds(10, 155, 92, 14);
 		panelOffer.add(food);
 		
 		transportRbtn = new JRadioButton("");
 		transportRbtn.setEnabled(false);
-		transportRbtn.setBounds(79, 82, 31, 23);
+		transportRbtn.setBounds(72, 107, 31, 23);
 		panelOffer.add(transportRbtn);
 		
 		hotelRbtn = new JRadioButton("");
 		hotelRbtn.setEnabled(false);
-		hotelRbtn.setBounds(79, 101, 31, 23);
+		hotelRbtn.setBounds(72, 126, 31, 23);
 		panelOffer.add(hotelRbtn);
 		
 		foodRbtn = new JRadioButton("");
 		foodRbtn.setEnabled(false);
-		foodRbtn.setBounds(79, 121, 31, 23);
+		foodRbtn.setBounds(72, 146, 31, 23);
 		panelOffer.add(foodRbtn);
 		
 		buyServiceBtn = new JButton("Comprar");
 		buyServiceBtn.setBounds(286, 11, 89, 23);
 		buyServiceBtn.addActionListener(this);
 		
+		reserveServiceBtn = new JButton("Reservar");
+		reserveServiceBtn.setBounds(286, 40, 89, 23);
+		reserveServiceBtn.addActionListener(this);
 		
 		JLabel searchOfferLbl = new JLabel("Buscar ofertas\r\n");
 		searchOfferLbl.setBounds(62, 136, 194, 33);
 		add(searchOfferLbl);
 		searchOfferLbl.setFont(new Font("Tahoma", Font.BOLD, 15));
+		
+		JLabel reservations = new JLabel("Pagos pendientes");
+		reservations.setFont(new Font("Tahoma", Font.BOLD, 15));
+		reservations.setBounds(500, 291, 265, 33);
+		add(reservations);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		panel.setBounds(500, 335, 310, 109);
+		add(panel);
+		panel.setLayout(null);
+		
+		pendingPayLbl = new JLabel("...");
+		pendingPayLbl.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		pendingPayLbl.setBounds(10, 11, 290, 32);
+		panel.add(pendingPayLbl);
+		
+		payReservation = new JButton("Pagar");
+		payReservation.setBounds(211, 75, 89, 23);
+		payReservation.addActionListener(this);
+		panel.add(payReservation);
 	}
 	
 	/*
 	 * Calls the controller to buy the service
 	 */
-	public void makeTransaction() {
-		ctrl.makeTransaction(serviceId);
+	public void makeTransaction(String reserveStatus) {
+		ctrl.makeTransaction(serviceId, reserveStatus);
 	}
 
 	@Override
@@ -245,6 +272,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 					
 					//Show the buy button
 					panelOffer.add(buyServiceBtn);
+					panelOffer.add(reserveServiceBtn);
 					this.repaint();
 				}else {
 					JOptionPane.showMessageDialog(null, "No existen ofertas que coincidan con su búsqueda", "Búsqueda no encontrada", JOptionPane.WARNING_MESSAGE);
@@ -259,9 +287,24 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 			ctrl.destroySession();
 			main.userWelcomeToMenu();
 		}else if(e.getActionCommand().equalsIgnoreCase(buyServiceBtn.getText())) {
-			int option = JOptionPane.showConfirmDialog(null, "Está a punto de comprar este servicio\n¿Está Seguro que desea continuar?", "¿Continuar?", JOptionPane.YES_NO_OPTION);
+			int option = JOptionPane.showConfirmDialog(null, "Está a punto de comprar este servicio\n¿Está seguro que desea continuar?", "¿Continuar?", JOptionPane.YES_NO_OPTION);
 			if(option == JOptionPane.YES_OPTION) {
-				buyWindow = new BuyWindow(this);
+				buyWindow = new BuyWindow(this, "ReservIncomplete");
+			}else {
+				option = JOptionPane.showConfirmDialog(null, "No es necesario comprar el servicio ahora,\npuede reservarlo y pagarlo más adelante\n¿Desea hacer una reserva?", "¿Reservar?", JOptionPane.YES_NO_OPTION);
+				if(option == JOptionPane.YES_NO_OPTION) {
+					ctrl.makeReservation(serviceId);
+				}
+			}
+		}else if(e.getActionCommand().equalsIgnoreCase(reserveServiceBtn.getText())) {
+			int option = JOptionPane.showConfirmDialog(null, "Esta a puento de reservar este servicio\n¿Desea continuar?", "¿Reservar?", JOptionPane.YES_NO_OPTION);
+			if(option == JOptionPane.YES_NO_OPTION) {
+				ctrl.makeReservation(serviceId);
+			}
+		}else if(e.getActionCommand().equalsIgnoreCase(payReservation.getText())) {
+			int option = JOptionPane.showConfirmDialog(null, "Está a punto de realizar el pago de está reserva\n¿Está seguro que desea continuar?", "¿Continuar?", JOptionPane.YES_NO_OPTION);
+			if(option == JOptionPane.YES_OPTION) {
+				buyWindow = new BuyWindow(this, "ReservComplete");
 			}
 		}
 	}

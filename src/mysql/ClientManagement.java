@@ -21,6 +21,7 @@ public class ClientManagement extends ConnectionManagement{
 	
 	//Contains important data about the person who is logged in 
 	private Session session;
+	private int reservationId;
 	
 	public ClientManagement(Session session) {
 		this.session = session;
@@ -198,13 +199,20 @@ public class ClientManagement extends ConnectionManagement{
 		}
 	}
 	
-	//Access to the database and complete the transaction
-	public boolean buyService(int userId, int serviceId) {
+	/*
+	 * Access to the database and complete the transaction.
+	 * 
+	 */
+	public boolean buyService(int serviceId, String type) {
 		
 		try {
-			openConnection();
 			
-			//Make the payment (NOT YET)
+			//Make the payment if the reservation isn't yet
+			if(type.equals("ReservIncomplete")) {
+				makeReservation(serviceId);
+			}
+			
+			openConnection();
 			
 			//Give the service
 			//1. Get the all information required in the database
@@ -224,10 +232,11 @@ public class ClientManagement extends ConnectionManagement{
 			prepare = connection.prepareStatement(sql);
 			prepare.setInt(1, providerId);
 			prepare.setInt(2, serviceId);
-			prepare.setInt(3, userId);
+			prepare.setInt(3, session.getId());
 			
 			int resul = prepare.executeUpdate();
 			if(resul > 0) {
+				actualizeReservation();
 				connection.commit();
 				closeConnection();
 				return true;
@@ -243,4 +252,72 @@ public class ClientManagement extends ConnectionManagement{
 		}
 	}
 	
+	public boolean makeReservation(int serviceId) {
+		
+		try {
+			openConnection();
+			connection.setAutoCommit(false);
+			
+			//Create the reservation
+			String sql = "INSERT INTO reservas (usuario, estadoReserva) VALUES (?,?)";
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			prepare.setInt(1, session.getId());
+			prepare.setInt(2, 0); //The value of the reservation status is 0 for not pay or 1 for pay
+			int resul = prepare.executeUpdate();
+			
+			if(resul > 0) {
+				//Association between reservation and service
+				connection.commit();
+				sql = "SELECT MAX(idReserva) AS lastID FROM reservas";
+				prepare = connection.prepareStatement(sql);
+				ResultSet resulSet = prepare.executeQuery();
+				 
+				if(resulSet.next()) {
+					reservationId = resulSet.getInt(1);//Save the ID of the last reservation
+				
+					sql = "INSERT INTO reservas_servicios (idReserva, idServicio) VALUES (?,?)";
+					prepare = connection.prepareStatement(sql);
+					prepare.setInt(1, reservationId);
+					prepare.setInt(2, serviceId);
+					resul = prepare.executeUpdate();
+					
+					if(resul > 0) {
+						connection.commit();
+						closeConnection();
+						return true;
+					}else {
+						connection.rollback();
+						connection.close();
+						return false;
+					}
+				}else
+					connection.rollback();
+					connection.close();
+					return false;
+			}else {
+				connection.rollback();
+				connection.close();
+				return false;
+			}
+			
+		} catch (Exception ex) {
+			closeConnection();
+			return false;
+		}
+	}
+	
+	public boolean actualizeReservation(){
+		try {
+			String sql = "UPDATE reservas SET estadoReserva = " + 1 +" WHERE idReserva = " + reservationId;
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			int resul = prepare.executeUpdate();
+			if(resul > 0) {
+				return true;
+			}else {
+				return false;
+			}
+		}catch (Exception ex) {
+			return false;
+		}
+	}
 }

@@ -230,12 +230,22 @@ public class Controller {
 	/*
 	 * If the bank account meets the requirements make the transaction
 	 */
-	public void makeTransaction(int serviceId) {
+	public void makeTransaction(int serviceId, String reserveStatus) {
 		ClientManagement client = new ClientManagement(session);
-		boolean status = client.buyService(session.getId(), serviceId);
+		boolean status = client.buyService(serviceId, reserveStatus);
 		if(status) {
 			System.out.println("Éxito");
 			JOptionPane.showMessageDialog(null, "Su compra se ha realizado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	public void makeReservation(int serviceId) {
+		ClientManagement client = new ClientManagement(session);
+		boolean status = client.makeReservation(serviceId);
+		if(status) {
+			JOptionPane.showMessageDialog(null, "Su reserva se ha realizado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		}else {
+			JOptionPane.showMessageDialog(null, "La reserva no ha podido ser completada,\nInténtelo nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
