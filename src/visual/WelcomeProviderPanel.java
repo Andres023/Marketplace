@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -39,6 +38,10 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 	private JScrollPane scroll;
 	private JTextField since;
 	private JTextField from;
+	private JTextArea hisotryTxtArea;
+	
+	private String sales;
+	private JLabel salesPeriodLbl;
 	
 	public WelcomeProviderPanel(Controller ctrl, Main main) {
 		
@@ -135,13 +138,14 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 		foodRadio.setBounds(62, 367, 109, 23);
 		add(foodRadio);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		textArea.setBounds(465, 99, 345, 346);
-		add(textArea);
+		hisotryTxtArea = new JTextArea();
+		hisotryTxtArea.setEditable(false);
+		hisotryTxtArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		hisotryTxtArea.setBounds(465, 99, 345, 346);
+		add(hisotryTxtArea);
 		
-		scroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroll.setBounds(465, 70, 345, 346);
+		scroll = new JScrollPane(hisotryTxtArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setBounds(465, 120, 345, 295);
 		this.add(scroll);
 		
 		JLabel lblNewLabel = new JLabel("Desde");
@@ -165,8 +169,27 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 		JLabel lblNewLabel_2 = new JLabel("YYYY-MM-DD");
 		lblNewLabel_2.setBounds(730, 431, 80, 14);
 		add(lblNewLabel_2);
+		
+		salesPeriodLbl = new JLabel("");
+		salesPeriodLbl.setFont(new Font("Tahoma", Font.BOLD, 13));
+		salesPeriodLbl.setBounds(465, 88, 345, 31);
+		add(salesPeriodLbl);
 
 
+	}
+	
+	public void clearPanel() {
+		nameTxt.setText("");
+		costTxt.setText("");
+		originCityTxt.setText("");
+		destinationCityTxt.setText("");
+		foodRadio.setSelected(false);
+		hotelRadio.setSelected(false);
+		transportRadio.setSelected(false);
+		salesPeriodLbl.setText("");
+		hisotryTxtArea.setText("");
+		since.setText("");
+		from.setText("");
 	}
 	
 	public int findDescription(JRadioButton item) {
@@ -175,6 +198,20 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 		}else {
 			return 0;
 		}
+	}
+
+	private void printSales(Date sinceDate, Date fromDate) {
+		salesPeriodLbl.setText("Ventas en el periodo " + sinceDate + " / " + fromDate);
+		String [] salesTmp = sales.split(",");
+		String msg = "";
+		String [] sale;
+
+		for (int i = 0; i < salesTmp.length; i++) {
+			sale = salesTmp[i].split("/");
+			msg += "Venta no.00"+sale[0]+" "+sale[1]+" a nombre de: "+sale[3]+" "+sale[4]+"identificado con el número: "+sale[6]+" por un valor de: "+sale[2]+" el día: "+sale[6]+"\n\n";
+		}
+
+		hisotryTxtArea.setText(msg);
 	}
 	
 	@Override
@@ -216,16 +253,29 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 			try {
 				Date sinceDate = Date.valueOf(since.getText());
 				Date fromDate = Date.valueOf(from.getText());
-				
-				
+
+				sales = ctrl.searchSales(sinceDate, fromDate, null);
+				System.out.println(sales);
+				if(sales.length() > 0) {
+					printSales(sinceDate, fromDate);
+				}else {
+					JOptionPane.showMessageDialog(null, "No se han encontrado resultados para esta búsqueda", "Sin resultados", JOptionPane.ERROR_MESSAGE);
+				}
 			}catch (Exception ex) {
 				JOptionPane.showMessageDialog(null, "Rango de fechas no válidas", "Fechas inválidas", JOptionPane.ERROR_MESSAGE);
 			}
 		}else if(e.getActionCommand().equalsIgnoreCase(showTrasactionsByClient.getText())) {
 			
+			String clientDoc = JOptionPane.showInputDialog("Ingrese el número de documento del cliente que desea buscar");
 			
+			if(clientDoc.length() > 0) {
+				ctrl.searchSales(null, null, clientDoc);
+			}else {
+				JOptionPane.showMessageDialog(null, "Debe llenarse este campo con algún valor para\npoder realizar la búsqueda", "Datos vacios", JOptionPane.ERROR_MESSAGE);
+			}
 			
 		}else if(e.getActionCommand().equalsIgnoreCase(logOutBtn.getText())) {
+			clearPanel();
 			main.providerWelcomeToMenu();
 		}
 		

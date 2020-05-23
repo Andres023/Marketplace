@@ -327,5 +327,27 @@ public class Controller {
 			return null;
 		}
 	}
+	
+	/*
+	 * Get the provider's sales
+	 */
+	public String searchSales(Date sinceDate, Date fromDate, String clientDoc) {
+		ProviderManagement provider = new ProviderManagement();
+		if(clientDoc == null) { // For global sales
+			String sales = provider.searchSales(sinceDate, fromDate, session.getId());
+			if(sales != null) {
+				return sales;
+			}else {
+				return null;
+			}
+		}else { // For client sales
+			String sales = provider.searchSales(clientDoc);
+			if(sales != null) {
+				return sales;
+			}else {
+				return null;
+			}
+		}
+	}
 
 }
