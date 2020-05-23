@@ -26,8 +26,7 @@ public class ServiceManagement extends ConnectionManagement{
 		
 		try {
 			
-			openConnection();
-			
+						
 			String sql = "INSERT INTO descripcion (transporte,hotel,alimento) VALUES (?,?,?)";
 			PreparedStatement prepare = connection.prepareStatement(sql);
 			
@@ -51,11 +50,9 @@ public class ServiceManagement extends ConnectionManagement{
 				
 				if(id > 0) {
 					connection.commit();
-					closeConnection();
 					return id;
 				}else {
 					connection.rollback();
-					closeConnection();
 					return -1;
 				}
 				

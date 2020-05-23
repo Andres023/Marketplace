@@ -2,30 +2,44 @@ package visual;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
+
+import controller.Controller;
+import visual.WelcomeUserPanel;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.awt.event.ActionEvent;
 
 public class BuyWindow extends JFrame implements ActionListener{
 	
 	private WelcomeUserPanel user;
 	
-	private JTextField textField;
+	private JTextField docNumber;
 	private JTextField cardNumber;
 	private JTextField dueDate;
 	private JTextField securityCode;
 	private JButton submitBtn;
 	
 	private String reserveStatus;
+	private int cost;
+	private Controller ctrl;
+	private String [] transaction;
+	private String typePay;
 	
-	public BuyWindow(WelcomeUserPanel user, String reserveStatus) {
+	public BuyWindow(WelcomeUserPanel user, String reserveStatus, int cost, Controller ctrl, String typePay) {
 		
 		this.user = user;
 		this.reserveStatus = reserveStatus;
+		this.cost = cost;
+		this.ctrl = ctrl;
+		this.typePay = typePay;
 		
 		setTitle("Compar un servicio");
 		setSize(425,460);
@@ -53,10 +67,10 @@ public class BuyWindow extends JFrame implements ActionListener{
 		legend2.setBounds(10, 37, 160, 14);
 		panelUser.add(legend2);
 		
-		textField = new JTextField();
-		textField.setBounds(168, 34, 180, 20);
-		panelUser.add(textField);
-		textField.setColumns(10);
+		docNumber = new JTextField();
+		docNumber.setBounds(168, 34, 180, 20);
+		panelUser.add(docNumber);
+		docNumber.setColumns(10);
 		
 		JLabel titleUser = new JLabel("Datos del usuario");
 		titleUser.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -111,12 +125,48 @@ public class BuyWindow extends JFrame implements ActionListener{
 		setVisible(true);
 	}
 
+	public boolean validateForm() {
+		if(docNumber.getText().length() > 0 || cardNumber.getText().length() > 0 
+		|| dueDate.getText().length() > 0 || securityCode.getText().length() > 0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equalsIgnoreCase(submitBtn.getText())) {
-			System.out.println("Comprar");
-			user.makeTransaction(reserveStatus);
-			this.dispose();
+			if(validateForm()) {
+				
+				String doc = docNumber.getText();
+				Date due = Date.valueOf(dueDate.getText());
+				int code = Integer.parseInt(securityCode.getText());
+				String card = cardNumber.getText();
+				
+				if(ctrl.makePay(doc, due, code, card, cost, this)){
+					System.out.println("Comprar");			
+					if(typePay.equals("BUY")) {
+						user.makeTransaction(reserveStatus, transaction);
+					}else if(typePay.equals("CART")) {
+						user.pendingPays(reserveStatus, transaction);
+					}
+					
+					this.dispose();
+				}
+			}else {
+				JOptionPane.showMessageDialog(null, "Por favor rellene todos los campos", "Formulario incompleto", JOptionPane.WARNING_MESSAGE);
+			}
 		}
 	}
+
+	public String[] getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(String[] transaction) {
+		this.transaction = transaction;
+	}
+	
+	
 }

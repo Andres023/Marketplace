@@ -27,12 +27,22 @@ public class LoginManagement extends ConnectionManagement{
 			
 			//ID user
 			int id = -1;
+			int personID = -1;
+			String docNumber = "";
+			
 			if(resulSet.next()){
 				id = resulSet.getInt(1);
 			}
 			
 			if(id > 0) {
-				ctrl.startSession(id, 1);
+				sql = "SELECT numDoc FROM personas WHERE idPersona = " + personID;
+				prepare = connection.prepareStatement(sql);
+				resulSet = prepare.executeQuery();
+				
+				if(resulSet.next()){
+					docNumber = resulSet.getString(1);
+				}
+				ctrl.startSession(id, docNumber, 1);
 				closeConnection();
 				return id;
 			}else {
@@ -98,7 +108,7 @@ public class LoginManagement extends ConnectionManagement{
 				}
 				
 				if(id > 0) {
-					ctrl.startSession(id, 3);
+					ctrl.startSession(id, "", 3);
 					closeConnection();
 					return id;
 				}else {

@@ -1,15 +1,20 @@
 package controller;
 
+import java.sql.Date;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import mysql.AdministratorManagement;
+import mysql.BankManagement;
 import mysql.ClientManagement;
 import mysql.LoginManagement;
 import mysql.ProviderManagement;
 import mysql.ServiceManagement;
+import visual.BuyWindow;
 import visual.Main;
+import visual.WelcomeUserPanel;
 import world.Administrator;
 import world.Provider;
 import world.Service;
@@ -26,13 +31,14 @@ public class Controller {
 	
 	private Main main;
 	private Session session;
+	private BankManagement bank;
 	
 	public Controller(Main main) {
 		this.main = main;
 	}
 	
-	public void startSession(int id, int typeOfPerson) {
-		session = new Session(id, typeOfPerson);
+	public void startSession(int id, String docNumber, int typeOfPerson) {
+		session = new Session(id, docNumber, typeOfPerson);
 	}
 	
 	public void destroySession() {
@@ -70,7 +76,7 @@ public class Controller {
 	/*
 	 * Returns the offer data searched by name
 	 */
-	public ArrayList<String> searchOfferByName(String offerName) {
+	public ArrayList<String> userSearchOffer(String offerName) {
 		System.out.println(session.getTypeOfPerson());
 		
 		ClientManagement client = new ClientManagement(session);
@@ -230,22 +236,95 @@ public class Controller {
 	/*
 	 * If the bank account meets the requirements make the transaction
 	 */
-	public void makeTransaction(int serviceId, String reserveStatus) {
+	public void makeTransaction(int serviceId, String reserveStatus, String [] transaction, String type, WelcomeUserPanel user) {
 		ClientManagement client = new ClientManagement(session);
-		boolean status = client.buyService(serviceId, reserveStatus);
+		boolean status = client.buyService(serviceId, reserveStatus, transaction, type);
 		if(status) {
 			System.out.println("Éxito");
 			JOptionPane.showMessageDialog(null, "Su compra se ha realizado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+			user.printCart();
+		}else {
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error al procesar su compra, por favor contacte a nuestra línea", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	public void makeReservation(int serviceId) {
+	public boolean makeReservation(int serviceId) {
 		ClientManagement client = new ClientManagement(session);
 		boolean status = client.makeReservation(serviceId);
 		if(status) {
 			JOptionPane.showMessageDialog(null, "Su reserva se ha realizado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+			return true;
 		}else {
 			JOptionPane.showMessageDialog(null, "La reserva no ha podido ser completada,\nInténtelo nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+	
+	/*
+	 * Verify if the user have enough money to make the pay and if is 
+	 * possible make it
+	 */
+	public boolean makePay(String docNumber, Date dueDate, int securityCode, String cardNumber, int cost, BuyWindow window){
+		bank = new BankManagement(docNumber, dueDate, securityCode, cardNumber, cost);
+		
+		switch (bank.makePay(window)) {
+		case "CORRECT":
+			JOptionPane.showMessageDialog(null, "El pago ha sido realizado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+			return true;
+		case "NO_BALANCE":
+			JOptionPane.showMessageDialog(null, "Usted no cuenta con saldo suficiente en su cuenta", "Sin saldo", JOptionPane.WARNING_MESSAGE);
+			return false;
+		case "NO_ACCOUNT":
+			JOptionPane.showMessageDialog(null, "Los datos ingresados son erróneos", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
+			return false;
+		case "ERROR":
+			JOptionPane.showMessageDialog(null, "Se ha producido un error\npor favor inténtelo nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		default:
+			return false;
+		}
+	}
+
+	public ResultSet searchCart() {
+		ClientManagement client = new ClientManagement(session);
+		return client.getCart();
+	}
+
+	public ArrayList<String> searchProvider() {
+		ClientManagement client = new ClientManagement (session);
+		return client.searchProvider();
+	}
+
+	public String adminSearchOffer(String offerIndication) {
+		AdministratorManagement admin = new AdministratorManagement();
+		String resul = admin.searchOffer(offerIndication);
+		if(resul != null) {
+			return resul;
+		}else {
+			JOptionPane.showMessageDialog(null, "No se han encotrado coincidencias con tu búsqueda", "Sin coincidencias", JOptionPane.WARNING_MESSAGE);
+			return null;
+		}
+	}
+
+	public void updateService(int idService, String name, int cost, String origin, int idDescription,
+			String destiny, String descriptions, int spaces) {
+		
+		AdministratorManagement admin = new AdministratorManagement();
+		if(admin.updateService(idService,name,cost,origin,idDescription,destiny,descriptions, spaces)) {
+			JOptionPane.showMessageDialog(null, "Cambios aplicados correctamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
+		}else {
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un problema al realizar los cambios\nInténtelo nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}
+
+	public String searchHistory(Date dateFromat) {
+		ClientManagement client = new ClientManagement(session);
+		String resul = client.searchHistory(dateFromat);
+		if(resul.length() > 0) {
+			return resul;
+		}else {
+			return null;
 		}
 	}
 

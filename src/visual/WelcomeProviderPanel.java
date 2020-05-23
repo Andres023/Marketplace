@@ -3,6 +3,7 @@ package visual;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -15,6 +16,8 @@ import world.Service;
 
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class WelcomeProviderPanel extends JPanel implements ActionListener{
 
@@ -24,7 +27,6 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 	private JButton logOutBtn;
 	private JButton showSales;
 	private JButton showTrasactionsByClient;
-	private JEditorPane services;
 	private JTextField nameTxt;
 	private JTextField costTxt;
 	private JTextField originCityTxt;
@@ -34,6 +36,9 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 	private JRadioButton transportRadio;
 	private JRadioButton hotelRadio;
 	private JRadioButton foodRadio;
+	private JScrollPane scroll;
+	private JTextField since;
+	private JTextField from;
 	
 	public WelcomeProviderPanel(Controller ctrl, Main main) {
 		
@@ -58,18 +63,13 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 		publishServiceLbl.setBounds(62, 147, 194, 33);
 		add(publishServiceLbl);
 		
-		services = new JEditorPane();
-		services.setEditable(false);
-		services.setBounds(512, 99, 297, 336);
-		add(services);
-		
 		logOutBtn = new JButton("Cerrar sesi\u00F3n");
 		logOutBtn.setBounds(672, 508, 138, 23);
 		logOutBtn.addActionListener(this);
 		add(logOutBtn);
 		
 		showSales = new JButton("Ventas globales");
-		showSales.setBounds(512, 456, 138, 23);
+		showSales.setBounds(465, 456, 138, 23);
 		showSales.addActionListener(this);
 		add(showSales);
 		
@@ -134,6 +134,39 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 		foodRadio = new JRadioButton("Alimento");
 		foodRadio.setBounds(62, 367, 109, 23);
 		add(foodRadio);
+		
+		JTextArea textArea = new JTextArea();
+		textArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		textArea.setBounds(465, 99, 345, 346);
+		add(textArea);
+		
+		scroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setBounds(465, 70, 345, 346);
+		this.add(scroll);
+		
+		JLabel lblNewLabel = new JLabel("Desde");
+		lblNewLabel.setBounds(465, 431, 46, 14);
+		add(lblNewLabel);
+		
+		since = new JTextField();
+		since.setBounds(503, 427, 86, 20);
+		add(since);
+		since.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Hasta");
+		lblNewLabel_1.setBounds(599, 431, 46, 14);
+		add(lblNewLabel_1);
+		
+		from = new JTextField();
+		from.setBounds(634, 427, 86, 20);
+		add(from);
+		from.setColumns(10);
+		
+		JLabel lblNewLabel_2 = new JLabel("YYYY-MM-DD");
+		lblNewLabel_2.setBounds(730, 431, 80, 14);
+		add(lblNewLabel_2);
+
+
 	}
 	
 	public int findDescription(JRadioButton item) {
@@ -180,8 +213,17 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 			}	
 			
 		}else if(e.getActionCommand().equalsIgnoreCase(showSales.getText())) {
-			
+			try {
+				Date sinceDate = Date.valueOf(since.getText());
+				Date fromDate = Date.valueOf(from.getText());
+				
+				
+			}catch (Exception ex) {
+				JOptionPane.showMessageDialog(null, "Rango de fechas no válidas", "Fechas inválidas", JOptionPane.ERROR_MESSAGE);
+			}
 		}else if(e.getActionCommand().equalsIgnoreCase(showTrasactionsByClient.getText())) {
+			
+			
 			
 		}else if(e.getActionCommand().equalsIgnoreCase(logOutBtn.getText())) {
 			main.providerWelcomeToMenu();

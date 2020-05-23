@@ -116,6 +116,7 @@ public class MainPanel extends JPanel implements ActionListener {
 			if(ctrl.userLogin(email, password) == 1) {
 				System.out.print("User");
 				ctrl.showWelcomePanel(1);
+				
 			}else if(ctrl.adminLogin(email, password) == 2){
 				System.out.print("Admin");
 				ctrl.showWelcomePanel(2);

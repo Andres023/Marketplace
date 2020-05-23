@@ -74,12 +74,14 @@ public class Main extends JFrame{
 	public void showUserWelcomePanel() {
 		this.remove(pnlMain);
 		this.add(welcomeUser);
+		welcomeUser.printCart();
 		screenRefresh();
 	}
 	
 	public void showAdminWelcomePanel() {
 		this.remove(pnlMain);
 		this.add(welcomeAdmin);
+		welcomeAdmin.searchOffers("");
 		screenRefresh();
 	}
 	
