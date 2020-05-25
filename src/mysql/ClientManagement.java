@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import controller.Controller;
 import world.Session;
 import world.User;
 
@@ -146,22 +147,18 @@ public class ClientManagement extends ConnectionManagement{
 			PreparedStatement prepare = connection.prepareStatement(sql);
 			ResultSet resulSet = prepare.executeQuery();
 			ArrayList<String> offer = new ArrayList<String>();
-			if(resulSet.next()) {
+			while(resulSet.next()) {
 				offer.add(resulSet.getInt(1)+"");
 				offer.add(resulSet.getString(2));
 				offer.add(resulSet.getInt(3)+"");
 				offer.add(resulSet.getDate(4)+"");
 				offer.add(resulSet.getString(5));
 				offer.add(resulSet.getInt(6)+"");
-				offer.add(resulSet.getString(7));
-				closeConnection();
-				end = System.nanoTime();
-				System.out.println("Tiempo de ejecución: " + (end-start) + " nano segundos");
-				return offer;
-			}else {
-				closeConnection();
-				return null;
+				offer.add(resulSet.getString(7));				
 			}
+			end = System.nanoTime();
+			System.out.println("Tiempo de ejecución: " + (end-start) + " nano segundos");
+			return offer;
 		}catch(Exception ex) {
 			closeConnection();
 			return null;
@@ -206,7 +203,7 @@ public class ClientManagement extends ConnectionManagement{
 	public boolean buyService(int reservId, String type, String[] transaction, String typePay) {
 		
 		try {
-			
+		
 			//Make the payment if the reservation isn't yet
 			if(type.equals("ReservIncomplete")) {
 				makeReservation(reservId);
@@ -249,7 +246,8 @@ public class ClientManagement extends ConnectionManagement{
 			
 			int resul = prepare.executeUpdate();
 			if(resul > 0) {
-				actualizeReservation();
+				//actualiceSpaces(serviceId);
+				actualiceReservation();
 				connection.commit();
 				closeConnection();
 				return true;
@@ -264,7 +262,54 @@ public class ClientManagement extends ConnectionManagement{
 			return false;
 		}
 	}
+	/*
+	public void actualiceSpaces(int serviceID) {
+		try {
+			String sql = "UPDATE servicios SET cupos = ? WHERE idServicio = ?";
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			prepare.setInt(1, (searchSpaces(serviceID)-1));
+			openConnection();
+			prepare.setInt(2, serviceID);
+			prepare.execute();
+			connection.commit();
+			closeConnection();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}*/
+
 	
+	/*
+	 * Search available spaces for a service
+	 */
+	public int searchSpaces(int serviceID) {
+		openConnection();
+		try {
+			String sql = "SELECT cupos FROM servicios WHERE idServicio = ?";
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			prepare.setInt(1, serviceID);
+			ResultSet rs = prepare.executeQuery();
+			
+			if(rs.next()) {
+				if (rs.getInt(1) > 0) {
+					int spaces = rs.getInt(1);
+					closeConnection();
+					return spaces;
+				}else {
+					closeConnection();
+					return 0;
+				}
+			}else {
+				closeConnection();
+				return 0;
+			}
+			
+		}catch (Exception e) {
+			closeConnection();
+			return 0;
+		}
+	}	
+
 	private boolean makeTransaction(String[] transaction) {
 		String sql = "INSERT INTO transacciones (nombreTransaccion, tipoPago, fechaPago, idUsuario) VALUES (?,?,?,?)";
 		
@@ -382,7 +427,7 @@ public class ClientManagement extends ConnectionManagement{
 		}
 	}
 	
-	public boolean actualizeReservation(){
+	public boolean actualiceReservation(){
 		try {
 			String sql = "UPDATE reservas SET estadoReserva = " + 1 +" WHERE idReserva = " + reservationId;
 			PreparedStatement prepare = connection.prepareStatement(sql);

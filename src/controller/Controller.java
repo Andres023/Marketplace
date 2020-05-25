@@ -1,4 +1,4 @@
-package controller;
+	package controller;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -32,6 +32,7 @@ public class Controller {
 	private Main main;
 	private Session session;
 	private BankManagement bank;
+	private String availableSpaces;
 	
 	public Controller(Main main) {
 		this.main = main;
@@ -239,6 +240,7 @@ public class Controller {
 	public void makeTransaction(int serviceId, String reserveStatus, String [] transaction, String type, WelcomeUserPanel user) {
 		ClientManagement client = new ClientManagement(session);
 		boolean status = client.buyService(serviceId, reserveStatus, transaction, type);
+		
 		if(status) {
 			System.out.println("Éxito");
 			JOptionPane.showMessageDialog(null, "Su compra se ha realizado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -341,13 +343,17 @@ public class Controller {
 				return null;
 			}
 		}else { // For client sales
-			String sales = provider.searchSales(clientDoc);
+			String sales = provider.searchSales(clientDoc, session.getId());
 			if(sales != null) {
 				return sales;
 			}else {
 				return null;
 			}
 		}
+	}
+
+	public void setAvailableSpaces(String availableSpaces) {
+		this.availableSpaces = availableSpaces;		
 	}
 
 }

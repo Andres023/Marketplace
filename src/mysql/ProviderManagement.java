@@ -73,9 +73,31 @@ public class ProviderManagement extends ConnectionManagement{
 		
 	}
 
-	public String searchSales(String clientDoc) {
-		
-		return null;
+	public String searchSales(String clientDoc, int provId) {
+		openConnection();
+		String sql = "SELECT ventas.IdVenta, servicios.nombreServicio, servicios.costo, personas.nombres, personas.apellidos, personas.numDoc, transacciones.fechaPago FROM ventas INNER JOIN servicios ON ventas.idServicio = servicios.idServicio INNER JOIN usuarios ON ventas.idUsuario = usuarios.idUsuario INNER JOIN personas ON personas.idPersona = usuarios.idPersona INNER JOIN transacciones ON transacciones.idTransaccion = ventas.idTransaccion WHERE ventas.idProveedor = ? AND personas.numDoc = ?";
+		String sales = "";
+		try {
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			prepare.setInt(1, provId);
+			prepare.setString(2, clientDoc);
+			ResultSet rs = prepare.executeQuery();
+			
+			while (rs.next()) {
+				sales+=rs.getInt(1)+"/";
+				sales+=rs.getString(2)+"/";
+				sales+=rs.getInt(3)+"/";
+				sales+=rs.getString(4)+"/";
+				sales+=rs.getString(5)+"/";
+				sales+=rs.getString(6)+"/";
+				sales+=rs.getDate(7)+",";
+			}
+			
+			return sales;
+			
+		}catch (Exception ex) {
+			return null;
+		}
 	}
 
 }

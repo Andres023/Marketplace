@@ -214,6 +214,21 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 		hisotryTxtArea.setText(msg);
 	}
 	
+	private void printSales() {
+		String [] salesTmp = sales.split(",");
+		String msg = "";
+		String [] sale;
+		String clientName = "";
+		for (int i = 0; i < salesTmp.length; i++) {
+			sale = salesTmp[i].split("/");
+			msg += "Venta no.00"+sale[0]+" "+sale[1]+" a nombre de: "+sale[3]+" "+sale[4]+"identificado con el número: "+sale[6]+" por un valor de: "+sale[2]+" el día: "+sale[6]+"\n\n";
+			clientName = sale[3];
+		}
+		
+		salesPeriodLbl.setText("Ventas a nombre del cliente: " + clientName);
+		hisotryTxtArea.setText(msg);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equalsIgnoreCase(publish.getText())) {
@@ -255,7 +270,7 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 				Date fromDate = Date.valueOf(from.getText());
 
 				sales = ctrl.searchSales(sinceDate, fromDate, null);
-				System.out.println(sales);
+				//System.out.println(sales);
 				if(sales.length() > 0) {
 					printSales(sinceDate, fromDate);
 				}else {
@@ -269,7 +284,12 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 			String clientDoc = JOptionPane.showInputDialog("Ingrese el número de documento del cliente que desea buscar");
 			
 			if(clientDoc.length() > 0) {
-				ctrl.searchSales(null, null, clientDoc);
+				sales = ctrl.searchSales(null, null, clientDoc);
+				if(sales.length() > 0) {
+					printSales();
+				}else {
+					JOptionPane.showMessageDialog(null, "No se han encontrado resultados para esta búsqueda", "Sin resultados", JOptionPane.ERROR_MESSAGE);
+				}
 			}else {
 				JOptionPane.showMessageDialog(null, "Debe llenarse este campo con algún valor para\npoder realizar la búsqueda", "Datos vacios", JOptionPane.ERROR_MESSAGE);
 			}
@@ -280,4 +300,6 @@ public class WelcomeProviderPanel extends JPanel implements ActionListener{
 		}
 		
 	}
+
+	
 }

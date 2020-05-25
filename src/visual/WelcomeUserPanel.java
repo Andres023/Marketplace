@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import controller.Controller;
+import mysql.ClientManagement;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -78,9 +80,12 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	private JButton backButton;
 	private JPanel historyPanel;
 	private JButton searchHistory;
+	private JButton nextButton;
 	private JLabel lblNewLabel_1;
 	private JTextField dateTxt;
 	private JTextArea historyArea;
+	
+	private int index = 0;
 	
 	public WelcomeUserPanel(Controller ctrl, Main main) {
 		this.ctrl = ctrl;
@@ -213,10 +218,12 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		
 		backButton = new JButton("<");
 		backButton.setBounds(73, 195, 89, 23);
+		backButton.addActionListener(this);
 		panelOffer.add(backButton);
 		
-		JButton nextButton = new JButton(">");
+		nextButton = new JButton(">");
 		nextButton.setBounds(207, 195, 89, 23);
+		nextButton.addActionListener(this);
 		panelOffer.add(nextButton);
 		
 		buyServiceBtn = new JButton("Comprar");
@@ -297,6 +304,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	public void printCart() {
 		pendingPayTxt.setText("");
 		totalCart = 0;	
+		cartIndexes = "";
 		String txt = "";
 		ResultSet rs = ctrl.searchCart();
 		if(rs != null) {
@@ -316,6 +324,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 			}
 			pendingPayTxt.setText(txt);
 			totalLbl.setText("Total: $" + totalCart);
+			System.out.println(totalCart);
 			System.out.println(cartIndexes);
 		}else {
 			System.out.println("no");
@@ -332,14 +341,48 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	}
 	
 	public void pendingPays(String reserveStatus, String [] transaction) {
-		String [] array = cartIndexes.split("/");
+		String [] reserv = cartIndexes.split("/");
 		
 		
-		for (int i = 0; i < array.length; i++) {
-			ctrl.makeTransaction(Integer.parseInt(array[i]), reserveStatus, transaction, "CART", this);
+		for (int i = 0; i < reserv.length; i++) {
+			ctrl.makeTransaction(Integer.parseInt(reserv[i]), reserveStatus, transaction, "CART", this);
 		}
 	}
 
+	private void paintOffers() {
+		//Show the service information
+
+		serviceId = Integer.parseInt(offer.get(0+index));System.out.println(serviceId+index);
+		
+		nameOffer.setText(offer.get(1+index));
+		costOffer.setText(offer.get(2+index) + " COP");
+		publishDate.setText(offer.get(3+index));
+		originCity.setText("De: " + offer.get(4+index));
+		destinationCity.setText("A: " + offer.get(6+index));
+		
+		description = ctrl.searchOfferDescription(Integer.parseInt(offer.get(5+index)));
+		if(description[0] == 1) {
+			transportRbtn.setSelected(true);
+		}else {
+			transportRbtn.setSelected(false);
+		}
+		if(description[1] == 1) {
+			hotelRbtn.setSelected(true);
+		}else {
+			hotelRbtn.setSelected(false);
+		}
+		if(description [2] == 1) {
+			foodRbtn.setSelected(true);
+		}else {
+			foodRbtn.setSelected(false);
+		}
+		
+		//Show the buy button
+		panelOffer.add(buyServiceBtn);
+		panelOffer.add(reserveServiceBtn);
+		this.repaint();
+	}
+	
 	private void viewProviderList(ArrayList<String> data) {
 		JFrame providersWindow = new JFrame();
 		providersWindow.setTitle("Proveedores");
@@ -403,37 +446,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 				this.offer = ctrl.userSearchOffer(searchOffer.getText());
 				if(offer != null) {
 					
-					//Show the service information
-
-					serviceId = Integer.parseInt(offer.get(0));System.out.println(serviceId);
-					
-					nameOffer.setText(offer.get(1));
-					costOffer.setText(offer.get(2) + " COP");
-					publishDate.setText(offer.get(3));
-					originCity.setText("De: " + offer.get(4));
-					destinationCity.setText("A: " + offer.get(6));
-					
-					description = ctrl.searchOfferDescription(Integer.parseInt(offer.get(5)));
-					if(description[0] == 1) {
-						transportRbtn.setSelected(true);
-					}else {
-						transportRbtn.setSelected(false);
-					}
-					if(description[1] == 1) {
-						hotelRbtn.setSelected(true);
-					}else {
-						hotelRbtn.setSelected(false);
-					}
-					if(description [2] == 1) {
-						foodRbtn.setSelected(true);
-					}else {
-						foodRbtn.setSelected(false);
-					}
-					
-					//Show the buy button
-					panelOffer.add(buyServiceBtn);
-					panelOffer.add(reserveServiceBtn);
-					this.repaint();
+					paintOffers();
 				}else {
 					JOptionPane.showMessageDialog(null, "No existen ofertas que coincidan con su búsqueda", "Búsqueda no encontrada", JOptionPane.WARNING_MESSAGE);
 				}
@@ -453,7 +466,13 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		}else if(e.getActionCommand().equalsIgnoreCase(buyServiceBtn.getText())) {
 			int option = JOptionPane.showConfirmDialog(null, "Está a punto de comprar este servicio\n¿Está seguro que desea continuar?", "¿Continuar?", JOptionPane.YES_NO_OPTION);
 			if(option == JOptionPane.YES_OPTION) {
-				buyWindow = new BuyWindow(this, "ReservIncomplete", Integer.parseInt(offer.get(2)), ctrl, "BUY");
+				if(new ClientManagement(null).searchSpaces(Integer.parseInt(offer.get(0))) > 0) {
+					buyWindow = new BuyWindow(this, "ReservIncomplete", Integer.parseInt(offer.get(2+index)), ctrl, "BUY");
+				}else {
+					JOptionPane.showMessageDialog(null, "Este servicio ha agotado sus cupos", "Sin cupos", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				System.out.println(offer);System.out.println(offer.get(2));
 			}else {
 				option = JOptionPane.showConfirmDialog(null, "No es necesario comprar el servicio ahora,\npuede reservarlo y pagarlo más adelante\n¿Desea hacer una reserva?", "¿Reservar?", JOptionPane.YES_NO_OPTION);
 				if(option == JOptionPane.YES_NO_OPTION) {
@@ -498,6 +517,18 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 				
 			}catch (Exception ex) {
 				JOptionPane.showMessageDialog(null, "La fecha ingresada no es válida", "Fecha inválida", JOptionPane.ERROR_MESSAGE);
+			}
+		}else if (e.getActionCommand().contentEquals(nextButton.getText())) {
+			if((index+=7) < offer.size()) {
+				paintOffers();
+			}else {
+				JOptionPane.showMessageDialog(null, "Este es último servicio en la lista de resultados", "Última posición", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}else if(e.getActionCommand().contentEquals(backButton.getText())) {
+			if((index-=7) > 0) {
+				paintOffers();
+			}else {
+				JOptionPane.showMessageDialog(null, "Este es primer servicio en la lista de resultados", "Primera posición", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 	}
