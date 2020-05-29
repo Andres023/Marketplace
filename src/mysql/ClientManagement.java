@@ -138,8 +138,8 @@ public class ClientManagement extends ConnectionManagement{
 	}
 
 	public ArrayList<String> searchOfferByName(String offerName) {
-		long start = System.nanoTime();
-		long end;
+		float start = System.nanoTime();
+		float end;
 		try {
 			openConnection();
 			String offerLike = "%"+offerName+"%";
@@ -156,8 +156,10 @@ public class ClientManagement extends ConnectionManagement{
 				offer.add(resulSet.getInt(6)+"");
 				offer.add(resulSet.getString(7));				
 			}
+			closeConnection();
 			end = System.nanoTime();
-			System.out.println("Tiempo de ejecución: " + (end-start) + " nano segundos");
+			float elapsedTime = (end-start)/1000000;
+			//System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 			return offer;
 		}catch(Exception ex) {
 			closeConnection();
@@ -283,6 +285,8 @@ public class ClientManagement extends ConnectionManagement{
 	 * Search available spaces for a service
 	 */
 	public int searchSpaces(int serviceID) {
+		double start = System.nanoTime();
+		double end;
 		openConnection();
 		try {
 			String sql = "SELECT cupos FROM servicios WHERE idServicio = ?";
@@ -294,6 +298,9 @@ public class ClientManagement extends ConnectionManagement{
 				if (rs.getInt(1) > 0) {
 					int spaces = rs.getInt(1);
 					closeConnection();
+					end = System.nanoTime();
+					double elapsedTime = (end-start)/1000000;
+					System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 					return spaces;
 				}else {
 					closeConnection();
@@ -443,11 +450,12 @@ public class ClientManagement extends ConnectionManagement{
 	}
 
 	public ResultSet getCart() {
-		long start = System.nanoTime();
-		long end;
+		double start = System.nanoTime();
+		double end;
 		try {
 			openConnection();
-			String sql = "SELECT reservas.idReserva, servicios.nombreServicio, servicios.costo FROM reservas INNER JOIN usuarios ON idUsuario = ? AND reservas.estadoReserva = ? INNER JOIN reservas_servicios ON reservas_servicios.idReserva = reservas.idReserva INNER JOIN servicios ON servicios.idServicio = reservas_servicios.idServicio WHERE reservas.usuario = ? AND reservas.estadoReserva = 0 ";
+			String sql = 
+					"SELECT reservas.idReserva, servicios.nombreServicio, servicios.costo FROM reservas INNER JOIN usuarios ON idUsuario = ? AND reservas.estadoReserva = ? INNER JOIN reservas_servicios ON reservas_servicios.idReserva = reservas.idReserva INNER JOIN servicios ON servicios.idServicio = reservas_servicios.idServicio WHERE reservas.usuario = ? AND reservas.estadoReserva = 0 ";
 			PreparedStatement prepare = connection.prepareStatement(sql);
 			prepare.setInt(1, session.getId());
 			prepare.setInt(2, 0);
@@ -455,7 +463,8 @@ public class ClientManagement extends ConnectionManagement{
 			ResultSet resulSet = prepare.executeQuery();
 			if(resulSet.next()) {	
 				end = System.nanoTime();
-				System.out.println("Tiempo de ejecución: " + (end-start) + " nano segundos");
+				double elapsedTime = (end-start)/1000000;
+				//System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 				return resulSet;
 			}else {
 				closeConnection();
@@ -469,6 +478,8 @@ public class ClientManagement extends ConnectionManagement{
 	}
 
 	public ArrayList<String> searchProvider() {
+		double start = System.nanoTime();
+		double end;
 		openConnection();
 		ArrayList<String> data = new ArrayList<String>();
 		try {			
@@ -484,6 +495,9 @@ public class ClientManagement extends ConnectionManagement{
 				data.add(rs.getString(5)+"");
 		}
 			closeConnection();
+			end = System.nanoTime();
+			double elapsedTime = (end-start)/1000000;
+			System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 			return data;
 		} catch (Exception e) {
 			closeConnection();
@@ -492,6 +506,8 @@ public class ClientManagement extends ConnectionManagement{
 	}
 
 	public String searchHistory(Date dateFromat) {
+		double start = System.nanoTime();
+		double end;
 		openConnection();
 		String resul = "";
 		try {
@@ -509,12 +525,48 @@ public class ClientManagement extends ConnectionManagement{
 				resul+=rs.getDate(4)+"/";
 				resul+=rs.getInt(5)+",";
 			}
-			
+			closeConnection();
+			end = System.nanoTime();
+			double elapsedTime = (end-start)/1000000;
+			System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 			return resul;
 			
 		}catch (Exception ex) {
 			closeConnection();
 			return "";
+		}
+	}
+
+	public String [] searchPersonalData(String email, String docNumber) {
+		double start = System.nanoTime();
+		double end;
+		openConnection();
+		String sql = 
+				"SELECT usuarios.correo, personas.numDoc FROM usuarios INNER JOIN "
+				+ "personas ON usuarios.idPersona = personas.idPersona WHERE "
+				+ "usuarios.correo = ? OR personas.numDoc = ?";
+		String [] data = new String [2];
+		try {
+			PreparedStatement prepare = connection.prepareStatement(sql);
+			prepare.setString(1, email);
+			prepare.setString(2, docNumber);
+			ResultSet rs = prepare.executeQuery();
+			
+			if (rs.next()) {
+				data [0] = rs.getString(1);
+				data [1] = rs.getString(2);
+				closeConnection();
+				end = System.nanoTime();
+				double elapsedTime = (end-start)/1000000;
+				//System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
+				return data;
+			}else {
+				closeConnection();
+				return null;
+			}
+		} catch (Exception ex) {
+			closeConnection();
+			return null;
 		}
 	}
 }

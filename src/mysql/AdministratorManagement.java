@@ -124,6 +124,9 @@ public class AdministratorManagement extends ConnectionManagement{
 	}
 
 	public String searchOffer(String offerIndication) {
+		double start = System.nanoTime();
+		double end;
+
 		String sql = "SELECT * FROM servicios";
 		String services = "";
 		int rows = 0;
@@ -165,6 +168,9 @@ public class AdministratorManagement extends ConnectionManagement{
 				}
 				
 				closeConnection();
+				end = System.nanoTime();
+				double elapsedTime = (end-start)/1000000;
+				System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 				return services;
 			}
 			

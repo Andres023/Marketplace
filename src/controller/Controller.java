@@ -33,6 +33,7 @@ public class Controller {
 	private Session session;
 	private BankManagement bank;
 	private String availableSpaces;
+	private String [] datas;
 	
 	public Controller(Main main) {
 		this.main = main;
@@ -56,21 +57,29 @@ public class Controller {
         ClientManagement register = new ClientManagement(session);
         
         //Insert the client in the DB
-        boolean insertPerson = register.registerPerson(user);
-        
-        //If the insert has been success, now, insert the user
-        if(insertPerson){
-        	boolean insertUser = register.registerUser(user);
-        	if(insertUser) {
-	        	JOptionPane.showMessageDialog(null, "Los datos han sido insertados correctamente.\n"
-	        			+ "Por favor inicie sesión", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        	}else {
-        		JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
-            			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+        datas = register.searchPersonalData(user.getEmail(), user.getDocNumber());
+        if ( datas != null) {
+        	if (datas [0].equals(user.getEmail())) {
+        		JOptionPane.showMessageDialog(null, "El e-mail que intenta utilizar ya esta registrado", "E-mail en uso", JOptionPane.WARNING_MESSAGE);
+        	}else if (datas [1].equals(user.getDocNumber())){
+        		JOptionPane.showMessageDialog(null, "Este número de documento ya está vinculado con otra cuenta", "Número de documento en uso", JOptionPane.WARNING_MESSAGE);
         	}
-        }else {
-        	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
-        			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+        }else {// The insert is only possible if the email or ID hasn't exists in the database
+        	//If the insert has been success, now, insert the user
+        	boolean insertPerson = register.registerPerson(user);
+            if(insertPerson){
+            	boolean insertUser = register.registerUser(user);
+            	if(insertUser) {
+    	        	JOptionPane.showMessageDialog(null, "Los datos han sido insertados correctamente.\n"
+    	        			+ "Por favor inicie sesión", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            	}else {
+            		JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
+                			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+            	}
+            }else {
+            	JOptionPane.showMessageDialog(null, "Los datos no ha podido ser insertados.\n"
+            			+ "Por favor inténtelo nuevamente", "Error", JOptionPane.WARNING_MESSAGE);
+            }
         }
 	}
 	
@@ -78,15 +87,15 @@ public class Controller {
 	 * Returns the offer data searched by name
 	 */
 	public ArrayList<String> userSearchOffer(String offerName) {
-		System.out.println(session.getTypeOfPerson());
+		//System.out.println(session.getTypeOfPerson());
 		
 		ClientManagement client = new ClientManagement(session);
 		ArrayList<String> offer = client.searchOfferByName(offerName);
 		if(offer != null) {
-			System.out.println(offer);
+			//System.out.println(offer);
 			return offer;
 		}else {
-			System.out.println("Algo flayó :c");
+			//System.out.println("Algo flayó :c");
 			return null;
 		}
 	}
@@ -162,7 +171,7 @@ public class Controller {
 		int loginStatus = login.loginUser(email, password, this);
 		
 		if(loginStatus > 0) {
-			System.out.println("Éxito");
+			//System.out.println("Éxito");
 			return 1; 
 			
 		}else {
@@ -178,7 +187,7 @@ public class Controller {
 		int loginStatus = login.loginAdmin(email, password);
 		
 		if(loginStatus > 0) {
-			System.out.println("Éxito");
+			//System.out.println("Éxito");
 			return 2;
 				
 		}else {
@@ -195,7 +204,7 @@ public class Controller {
 		int loginStatus = login.loginProvider(email, password, this);
 		
 		if(loginStatus > 0) {
-			System.out.println("Éxito");
+			//System.out.println("Éxito");
 			return 3;
 				
 		}else {
@@ -242,7 +251,7 @@ public class Controller {
 		boolean status = client.buyService(serviceId, reserveStatus, transaction, type);
 		
 		if(status) {
-			System.out.println("Éxito");
+			//System.out.println("Éxito");
 			JOptionPane.showMessageDialog(null, "Su compra se ha realizado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 			user.printCart();
 		}else {

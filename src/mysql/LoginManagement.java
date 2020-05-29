@@ -14,7 +14,8 @@ public class LoginManagement extends ConnectionManagement{
 	
 	//Verify if the user exist in the DB
 	public int loginUser (String email, String password, Controller ctrl) {
-		
+		double  start = System.nanoTime();
+		double end;
 		openConnection();
 		
 		String sql = "SELECT idUsuario FROM usuarios WHERE correo = ? AND clave = ?";
@@ -44,6 +45,9 @@ public class LoginManagement extends ConnectionManagement{
 				}
 				ctrl.startSession(id, docNumber, 1);
 				closeConnection();
+				end = System.nanoTime();
+				double elapsedTime = (end-start)/1000000;
+				//System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 				return id;
 			}else {
 				closeConnection();

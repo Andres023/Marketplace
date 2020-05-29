@@ -300,7 +300,7 @@ public class WelcomeAdminPanel extends JPanel implements ActionListener{
 		searchServices = ctrl.adminSearchOffer(offerIndication);
 		
 		if(searchServices != null) {
-			System.out.println(searchServices);
+			//System.out.println(searchServices);
 			services = searchServices.split("/");
 			showOffers();
 		}
@@ -322,7 +322,7 @@ public class WelcomeAdminPanel extends JPanel implements ActionListener{
 	}
 	
 	public void showDescription() {
-		System.out.println(description[0]+description[1]+description[2]);
+		//System.out.println(description[0]+description[1]+description[2]);
 		
 		if(description[0].equals("1")) {
 			transportRadio.setSelected(true);

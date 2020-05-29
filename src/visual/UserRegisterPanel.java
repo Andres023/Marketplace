@@ -241,10 +241,10 @@ public class UserRegisterPanel extends JPanel implements ActionListener {
 				&& docNumberTxt.getText().length() > 0 && phoneNumberTxt.getText().length() > 0 && postalCodeTxt.getText().length() > 0 
 				&& getBirthFormat().length() > 0 && genderTypeChoice.getSelectedItem().toString().length() > 0 && emailTxt.getText().length() > 0 
 				&& passwordTxt.getText().length() > 0 && repeatPaswordTxt.getText().length() > 0) {
-			System.out.println("Lleno");
+			//System.out.println("Lleno");
 			return true;
 		}else {
-			System.out.print("Incompleto");
+			//System.out.print("Incompleto");
 			return false;
 		}
 	}

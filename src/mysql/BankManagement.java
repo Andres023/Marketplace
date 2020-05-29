@@ -33,7 +33,9 @@ public class BankManagement extends BankConnection{
 	 * have enough money
 	 */
 	public String searchMoney(){
-		
+		double start = System.nanoTime();
+		double end;
+
 		openConnection();
 		
 		try {
@@ -59,6 +61,9 @@ public class BankManagement extends BankConnection{
 				if(resulSet.next()) {// Find the account balance
 					this.balance = resulSet.getInt(1);
 					closeConnection();
+					end = System.nanoTime();
+					double elapsedTime = (end-start)/1000000;
+					System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 					return "CORRECT";
 				}else {
 					closeConnection();

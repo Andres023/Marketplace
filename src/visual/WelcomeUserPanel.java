@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import com.mysql.fabric.xmlrpc.base.Array;
 
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
@@ -84,6 +85,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	private JLabel lblNewLabel_1;
 	private JTextField dateTxt;
 	private JTextArea historyArea;
+	private JScrollPane scroll;
 	
 	private int index = 0;
 	
@@ -294,8 +296,11 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		historyArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		historyArea.setEditable(false);
 		historyArea.setBounds(10, 11, 290, 113);
-		historyPanel.add(historyArea);
+		//historyPanel.add(historyArea);
 		
+		scroll = new JScrollPane(historyArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setBounds(10, 11, 290, 113);
+		historyPanel.add(scroll);
 	}
 	
 	/*
@@ -324,10 +329,10 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 			}
 			pendingPayTxt.setText(txt);
 			totalLbl.setText("Total: $" + totalCart);
-			System.out.println(totalCart);
-			System.out.println(cartIndexes);
+			//System.out.println(totalCart);
+			//System.out.println(cartIndexes);
 		}else {
-			System.out.println("no");
+			//System.out.println("no");
 			pendingPayTxt.setText("Actualmente no hay pagos pendientes");
 			totalLbl.setText("Total: $0");
 		}
@@ -352,7 +357,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 	private void paintOffers() {
 		//Show the service information
 
-		serviceId = Integer.parseInt(offer.get(0+index));System.out.println(serviceId+index);
+		serviceId = Integer.parseInt(offer.get(0+index));//System.out.println(serviceId+index);
 		
 		nameOffer.setText(offer.get(1+index));
 		costOffer.setText(offer.get(2+index) + " COP");
@@ -430,12 +435,13 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 		
 		
 		JPanel pnl = new JPanel();
-		pnl.setBounds(0,0,500,500);
-		pnl.setLayout(null);
 		pnl.add(tabla);
 		
 		providersWindow.setVisible(true);
-		providersWindow.getContentPane().add(pnl);
+		
+		JScrollPane scroll = new JScrollPane(pnl, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setBounds(0,0,500,500);
+		providersWindow.getContentPane().add(scroll);
 	}
 	
 	@Override
@@ -472,7 +478,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 					JOptionPane.showMessageDialog(null, "Este servicio ha agotado sus cupos", "Sin cupos", JOptionPane.ERROR_MESSAGE);
 				}
 				
-				System.out.println(offer);System.out.println(offer.get(2));
+				//System.out.println(offer);System.out.println(offer.get(2));
 			}else {
 				option = JOptionPane.showConfirmDialog(null, "No es necesario comprar el servicio ahora,\npuede reservarlo y pagarlo más adelante\n¿Desea hacer una reserva?", "¿Reservar?", JOptionPane.YES_NO_OPTION);
 				if(option == JOptionPane.YES_NO_OPTION) {
@@ -490,7 +496,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 			int option = JOptionPane.showConfirmDialog(null, "Está a punto de realizar el pago de estas reserva\n¿Está seguro que desea continuar?", "¿Continuar?", JOptionPane.YES_NO_OPTION);
 			if(option == JOptionPane.YES_OPTION) {
 				int cost = Integer.parseInt(totalLbl.getText().substring(8));
-				System.out.println(cost);
+				//System.out.println(cost);
 				buyWindow = new BuyWindow(this, "ReservComplete", cost, ctrl, "CART");
 				printCart();
 				repaint();
@@ -500,7 +506,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 			try {
 				Date dateFromat = Date.valueOf(date);
 				String history = ctrl.searchHistory(dateFromat);
-				System.out.println(history);
+				//System.out.println(history);
 				String msg = "";
 				if (history != null) {
 					String [] transactions = history.split(",");
@@ -508,7 +514,7 @@ public class WelcomeUserPanel extends JPanel implements ActionListener {
 					
 					for (int i = 0; i < transactions.length; i++) {
 						transTemp = transactions[i].split("/");
-						msg += transTemp[1] + " el día: " + transTemp[3] + "\n";
+						msg += transTemp[1] + " el día: " + transTemp[3] + "\n\n";
 					}
 					historyArea.setText(msg);
 				}else {

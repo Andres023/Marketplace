@@ -100,11 +100,11 @@ public class MainPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(registerAdminBtn.getText())){
 			main.showAdministratorRegisterPanel();
-			System.out.println("1");
+			//System.out.println("1");
 			
 		}else if(e.getActionCommand().equals(registerUserBtn.getText())){
 			main.showUserRegisterPanel();
-			System.out.println("2");
+			//System.out.println("2");
 			
 		}else if(e.getActionCommand().equals(loginBtn.getText())) {
 			//Get data of the login form
@@ -114,14 +114,14 @@ public class MainPanel extends JPanel implements ActionListener {
 			//Calls the login functions to verify if the person that wants login is a user, administrator 
 			//or a not registered person
 			if(ctrl.userLogin(email, password) == 1) {
-				System.out.print("User");
+				//System.out.print("User");
 				ctrl.showWelcomePanel(1);
 				
 			}else if(ctrl.adminLogin(email, password) == 2){
-				System.out.print("Admin");
+				//System.out.print("Admin");
 				ctrl.showWelcomePanel(2);
 			}else if(ctrl.providerLogin(email, password) == 3){
-				System.out.println("Provider");
+				//System.out.println("Provider");
 				ctrl.showWelcomePanel(3);
 			}else
 				JOptionPane.showMessageDialog(null, "El correo o la contraseña son incorrectos.\n"

@@ -45,6 +45,9 @@ public class ProviderManagement extends ConnectionManagement{
 	}
 
 	public String searchSales(Date sinceDate, Date fromDate, int provId) {
+		double start = System.nanoTime();
+		double end;
+
 		openConnection();
 		String sql = "SELECT ventas.IdVenta, servicios.nombreServicio, servicios.costo, personas.nombres, personas.apellidos, personas.numDoc, transacciones.fechaPago FROM ventas INNER JOIN servicios ON ventas.idServicio = servicios.idServicio INNER JOIN usuarios ON ventas.idUsuario = usuarios.idUsuario INNER JOIN personas ON personas.idPersona = usuarios.idPersona INNER JOIN transacciones ON transacciones.idTransaccion = ventas.idTransaccion WHERE ventas.idProveedor = ? AND transacciones.fechaPago BETWEEN ? AND ?;";
 		String sales = "";
@@ -65,8 +68,10 @@ public class ProviderManagement extends ConnectionManagement{
 				sales+=rs.getDate(7)+",";
 			}
 			
+			end = System.nanoTime();
+			double elapsedTime = (end-start)/1000000;
+			System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 			return sales;
-			
 		}catch (Exception ex) {
 			return null;
 		}
@@ -74,6 +79,9 @@ public class ProviderManagement extends ConnectionManagement{
 	}
 
 	public String searchSales(String clientDoc, int provId) {
+		double start = System.nanoTime();
+		double end;
+
 		openConnection();
 		String sql = "SELECT ventas.IdVenta, servicios.nombreServicio, servicios.costo, personas.nombres, personas.apellidos, personas.numDoc, transacciones.fechaPago FROM ventas INNER JOIN servicios ON ventas.idServicio = servicios.idServicio INNER JOIN usuarios ON ventas.idUsuario = usuarios.idUsuario INNER JOIN personas ON personas.idPersona = usuarios.idPersona INNER JOIN transacciones ON transacciones.idTransaccion = ventas.idTransaccion WHERE ventas.idProveedor = ? AND personas.numDoc = ?";
 		String sales = "";
@@ -92,7 +100,9 @@ public class ProviderManagement extends ConnectionManagement{
 				sales+=rs.getString(6)+"/";
 				sales+=rs.getDate(7)+",";
 			}
-			
+			end = System.nanoTime();
+			double elapsedTime = (end-start)/1000000;
+			//System.out.println("Tiempo de ejecución: "+ elapsedTime + " Milisegundos");
 			return sales;
 			
 		}catch (Exception ex) {
